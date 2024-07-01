@@ -14,7 +14,8 @@ class Star:
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
-        radius = random.randrange(HEIGTH // SCALE_POS, HEIGTH) * SCALE_POS
+        radius = random.randrange(HEIGTH // SCALE_POS, HEIGTH) * SCALE_POS #For starfield
+        #radius = random.randrange(HEIGTH // 4, HEIGTH //3) * SCALE_POS #For hyperspace tunnel
         x = radius * math.sin(angle)
         y = radius * math.cos(angle)
         return vec3(x, y, Z_DISTANCE)
@@ -24,7 +25,13 @@ class Star:
         self.pos3d = self.get_pos3d() if self.pos3d.z < 1 else self.pos3d
 
         self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER
-        self.size = (Z_DISTANCE / sFelf.pos3d.z)
+        self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
+
+        #Rotate
+        self.pos3d.xy = self.pos3d.xy.rotate(0.2)
+        #Mouse control
+        mouse_pos = CENTER - vec2(pygame.mouse.get_pos())
+        self.screen_pos += mouse_pos
 
     def draw(self):
         pygame.draw.rect(self.screen, self.color, (*self.screen_pos, self.size, self.size))
