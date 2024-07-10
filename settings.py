@@ -1,14 +1,20 @@
 import pygame
 
-RESOLUTION = WIDTH, HEIGTH = (1600, 900)
+RESOLUTION = SCREEN_WIDTH,  SCREEN_HEIGHT = (1600, 900)
 FLAGS = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
 MAX_FPS = 60
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
-CENTER = vec2(WIDTH // 2, HEIGTH // 2)
+CENTER = vec2(SCREEN_WIDTH // 2,  SCREEN_HEIGHT // 2)
 SCALE_POS = 35
 INITIAL_SIZE = 5
 NUM_ENEMIES = 10
+
+#Keybinds
+FULLSCREEN_KEY = pygame.K_f
+
+#Game variables
+ROTATION_VELOCITY = 0.1
 
 #For starfield
 NUM_STARS = 1500

@@ -6,7 +6,7 @@ vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 
 class Enemy:
     def __init__(self, game):
-        self.screen = game.screen
+        self.screen = game.fake_screen
         self.pos3d = self.get_pos3d()
         self.vel = random.uniform(0.05, 0.25)
         self.sprite = pygame.image.load('graphics/spaceship_enemy.png')
@@ -16,8 +16,8 @@ class Enemy:
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
-        radius = random.randrange(HEIGTH // SCALE_POS, HEIGTH) * SCALE_POS #For starfield
-        #radius = random.randrange(HEIGTH // 4, HEIGTH //3) * SCALE_POS #For hyperspace tunnel
+        radius = random.randrange( SCREEN_HEIGHT // SCALE_POS,  SCREEN_HEIGHT) * SCALE_POS #For starfield
+        #radius = random.randrange( SCREEN_HEIGHT // 4,  SCREEN_HEIGHT //3) * SCALE_POS #For hyperspace tunnel
         x = radius * math.sin(angle)
         y = radius * math.cos(angle)
         return vec3(x, y, Z_DISTANCE)
