@@ -11,6 +11,7 @@ class Star:
         self.color = random.choice(COLORS)
         self.size = INITIAL_SIZE
         self.screen_pos = vec2(0, 0)
+        self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
 
         self.is_rotating = False  # New variable to track rotation state
         self.rotation_amount = 0.0  # New variable to track cumulative rotation
@@ -28,17 +29,17 @@ class Star:
         self.pos3d.z -= self.vel
         self.pos3d = self.get_pos3d() if self.pos3d.z < 1 else self.pos3d
 
-        self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER
+        self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
 
         self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)  # Rotate the star
 
-        if pygame.mouse.get_pressed()[2]:  # Changed to check for left mouse button (index 0)
+        if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
             # Rotate
             self.pos3d.xy = self.pos3d.xy.rotate(0.1)
             # Mouse control
-            mouse_pos = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER  # Corrected order and used pygame Vector2 for subtraction
-            self.screen_pos += mouse_pos
+            self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
+            
 
     def draw(self):
         pygame.draw.rect(self.screen, self.color, (*self.screen_pos, self.size, self.size))

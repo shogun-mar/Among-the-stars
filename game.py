@@ -21,11 +21,14 @@ class Game:
         #Starfield object
         self.starfield = None
         
-        #Score
+        #Game variables
         self.score_font = pygame.font.Font("graphics/score_font.ttf", 36)
         self.score: int = 0
         self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
+
+        self.action_cooldown: int = 1000  # Cooldown in milliseconds
+        self.last_action_time: int = 0  # Time of the last action
 
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
@@ -38,7 +41,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE: self.quit_game() 
                     if event.key == FULLSCREEN_KEY:  #Toggle fullscreen (explores all possible configurations because some drivers may not support all)
-                        if not(pygame.display.get_surface().get_size() == (self.hw_screen_width, self.hw_screen_height)): #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
+                        if not(pygame.display.get_surface().get_size() == (self.hw_screen_width, self.hw_screen_height)): #Windowed borderless to increase probability of compatibility and so switching to other windows is easier
                             self.alpha_surface = pygame.transform.scale(self.alpha_surface, (self.hw_screen_width, self.hw_screen_height))
                             try:
                                 self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), FLAGS | pygame.NOFRAME | pygame.SCALED, vsync=1)
@@ -68,6 +71,17 @@ class Game:
 
     def set_starfield(self, starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
         self.starfield = starfield
+
+    def check_collisions(self):
+        if pygame.mouse.get_pressed()[0]:  # Separated the two conditions to call get_ticks only when needed
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_action_time > self.action_cooldown:
+                mouse_pos = pygame.mouse.get_pos()  # Get mouse position
+                self.last_action_time = current_time  # Update last action time
+                for enemy in list(self.starfield.enemies):  # Make a shallow copy for safe removal
+                    if enemy.rect.collidepoint(mouse_pos):
+                        self.starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
+                        self.update_score(1)
 
     def quit_game(self):
         pygame.quit()

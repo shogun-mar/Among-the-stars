@@ -10,9 +10,9 @@ class Enemy:
         self.pos3d = self.get_pos3d()
         self.vel = random.uniform(0.05, 0.25)
         self.sprite = pygame.image.load('graphics/spaceship_enemy.png')
-        self.rect = self.sprite.get_rect()
+        self.rect = self.sprite.get_rect(topleft = (0, 0))
         self.size = INITIAL_SIZE
-        self.screen_pos = vec2(0, 0)
+        self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
@@ -26,14 +26,16 @@ class Enemy:
         self.pos3d.z -= self.vel
         self.pos3d = self.get_pos3d() if self.pos3d.z < 1 else self.pos3d
 
-        self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER
+        self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
 
-        #Rotate
-        self.pos3d.xy = self.pos3d.xy.rotate(0.2)
-        #Mouse control
-        mouse_pos = CENTER - vec2(pygame.mouse.get_pos())
-        self.screen_pos += mouse_pos
+        self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)  # Rotate the star
+
+        if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
+            # Rotate
+            self.pos3d.xy = self.pos3d.xy.rotate(0.1)
+            # Mouse control
+            self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
 
     def draw(self):
         self.screen.blit(self.sprite, self.rect)
