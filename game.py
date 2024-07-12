@@ -3,6 +3,8 @@ from os import environ
 from sys import exit
 from ctypes import windll
 from settings import *
+from gameState import GameState
+from gameplayState import *
 
 class Game:
     def __init__(self):
@@ -22,6 +24,9 @@ class Game:
         self.starfield = None
         
         #Game variables
+        self.game_state = GameState.GAMEPLAY
+        self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
+
         self.score_font = pygame.font.Font("graphics/score_font.ttf", 36)
         self.score: int = 0
         self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
@@ -35,12 +40,18 @@ class Game:
 
     def run(self):
         while True:
-            for event in pygame.event.get():
+            self.handle_events()
+            self.update_logic()
+            self.render()
+            
+    def handle_events(self):
+        for event in pygame.event.get():
+                #General events
                 if event.type == pygame.QUIT: self.quit_game()
                 elif event.type == pygame.VIDEORESIZE: self.screen = pygame.display.set_mode((event.w, event.h), FLAGS, vsync=1)
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE: self.quit_game() 
-                    if event.key == FULLSCREEN_KEY:  #Toggle fullscreen (explores all possible configurations because some drivers may not support all)
+                    elif event.key == FULLSCREEN_KEY:  #Toggle fullscreen (explores all possible configurations because some drivers may not support all)
                         if not(pygame.display.get_surface().get_size() == (self.hw_screen_width, self.hw_screen_height)): #Windowed borderless to increase probability of compatibility and so switching to other windows is easier
                             self.alpha_surface = pygame.transform.scale(self.alpha_surface, (self.hw_screen_width, self.hw_screen_height))
                             try:
@@ -53,16 +64,34 @@ class Game:
                                 self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS | pygame.SCALED, vsync=1)         
                             except Exception:
                                 self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS)
-            
-            pygame.display.set_caption(f"PokèScrauso - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
+                
+                    #Gamestate specific events
+                    elif self.game_state == GameState.GAMEPLAY:
+                        handle_gameplay_events(self, event.key)
 
-            self.fake_screen.blit(self.alpha_surface, (0,0)) 
-            self.starfield.run()
-            self.fake_screen.blit(self.rendered_score, self.rendered_score_rect)
+                #Mouse related events
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.game_state == GameState.GAMEPLAY:
+                        handle_gameplay_events_mouse(self, event.button)
+                        
 
-            self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0)) #Scale the fake screen to the current screen size
-            pygame.display.flip()
-            self.clock.tick(MAX_FPS)
+    def update_logic(self):
+        pygame.display.set_caption(f"PokèScrauso - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
+        if self.game_state == GameState.GAMEPLAY:
+            self.starfield.update()
+
+
+    def render(self):
+        if self.game_state == GameState.GAMEPLAY:
+            render_gameplay(self)
+        elif self.game_state == GameState.PAUSE:
+            pass
+
+        
+        self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0)) #Scale the fake screen to the current screen size
+        pygame.display.flip()
+        self.clock.tick(MAX_FPS)
+
 
     def update_score(self, amount):
         self.score += amount
@@ -81,11 +110,12 @@ class Game:
                 for enemy in list(self.starfield.enemies):  # Make a shallow copy for safe removal
                     if enemy.rect.collidepoint(mouse_pos):
                         self.starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
+                        self.starfield.surf_to_draw.remove(enemy)  # Correctly remove the enemy from the list to draw
                         self.update_score(1)
 
     def quit_game(self):
         pygame.quit()
-        quit()
+        exit()
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

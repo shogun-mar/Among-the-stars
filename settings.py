@@ -8,7 +8,7 @@ vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 CENTER = vec2(SCREEN_WIDTH // 2,  SCREEN_HEIGHT // 2)
 SCALE_POS = 35
 INITIAL_SIZE = 5
-NUM_ENEMIES = 10
+NUM_ENEMIES = 1
 
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f
