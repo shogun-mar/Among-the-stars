@@ -5,6 +5,7 @@ from ctypes import windll
 from settings import *
 from gameState import GameState
 from gameplayState import *
+from startMenuState import *
 
 class Game:
     def __init__(self):
@@ -24,7 +25,7 @@ class Game:
         self.starfield = None
         
         #Game variables
-        self.game_state = GameState.GAMEPLAY
+        self.game_state = GameState.STARTMENU
         self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
 
         self.score_font = pygame.font.Font("graphics/score_font.ttf", 36)
@@ -68,30 +69,29 @@ class Game:
                     #Gamestate specific events
                     elif self.game_state == GameState.GAMEPLAY:
                         handle_gameplay_events(self, event.key)
+                    
+                    elif self.game_state == GameState.STARTMENU:
+                        handle_start_menu_events(self, event.key)
 
                 #Mouse related events
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.game_state == GameState.GAMEPLAY:
-                        handle_gameplay_events_mouse(self, event.button)
-                        
+                    if self.game_state == GameState.GAMEPLAY: handle_gameplay_events_mouse(self, event.button, pygame.mouse.get_pos())
+                    elif self.game_state == GameState.STARTMENU: handle_start_menu_events_mouse(self, event.button, pygame.mouse.get_pos())           
 
     def update_logic(self):
-        pygame.display.set_caption(f"PokèScrauso - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
+        pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
-            self.starfield.update()
-
+            self.starfield.update(self)
 
     def render(self):
-        if self.game_state == GameState.GAMEPLAY:
-            render_gameplay(self)
+        if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
+        elif self.game_state == GameState.STARTMENU: render_start_menu(self)
         elif self.game_state == GameState.PAUSE:
             pass
 
-        
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0)) #Scale the fake screen to the current screen size
         pygame.display.flip()
         self.clock.tick(MAX_FPS)
-
 
     def update_score(self, amount):
         self.score += amount
@@ -101,11 +101,10 @@ class Game:
     def set_starfield(self, starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
         self.starfield = starfield
 
-    def check_collisions(self):
+    def check_collisions(self, mouse_pos):
         if pygame.mouse.get_pressed()[0]:  # Separated the two conditions to call get_ticks only when needed
             current_time = pygame.time.get_ticks()
             if current_time - self.last_action_time > self.action_cooldown:
-                mouse_pos = pygame.mouse.get_pos()  # Get mouse position
                 self.last_action_time = current_time  # Update last action time
                 for enemy in list(self.starfield.enemies):  # Make a shallow copy for safe removal
                     if enemy.rect.collidepoint(mouse_pos):
