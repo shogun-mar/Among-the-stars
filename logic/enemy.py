@@ -1,12 +1,14 @@
 import pygame
 import random, math
 from settings import *
+from logic.projectile import Projectile
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 
 class Enemy:
     def __init__(self, game):
         self.screen = game.fake_screen
+        self.game = game
         self.pos3d = self.get_pos3d()
         self.vel = random.uniform(0.05, 0.25)
         self.sprite = pygame.image.load('graphics/spaceship_enemy.png')
@@ -27,6 +29,11 @@ class Enemy:
         self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
 
+        self.shoot_at_player()
+
+        # if random.randint(1, 4) == 1:
+        #     self.shoot_at_player()
+
         if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
             # Rotate
             self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)
@@ -35,3 +42,11 @@ class Enemy:
 
     def draw(self):
         self.screen.blit(self.sprite, self.rect)
+
+    def shoot_at_player(self):
+        # Create a projectile aimed at the player's position
+        player_pos = (SCREEN_HEIGHT, SCREEN_WIDTH // 2)
+        projectile = Projectile(self.rect.midbottom, player_pos, self) # Create a projectile
+        self.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
+
+        

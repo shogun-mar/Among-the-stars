@@ -24,7 +24,7 @@ class Game:
         self.clock = pygame.time.Clock()
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE]) # Allow only specific events (for performance reasons)
 
-        #Starfield object
+        #Starfield objects
         self.game_starfield = None
         self.hyperspace_starfield = None
         
@@ -100,6 +100,7 @@ class Game:
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
             self.game_starfield.update(self)
+            
             if self.life_points == 0:
                 self.quit_game()
         elif self.game_state == GameState.STARTMENU:
