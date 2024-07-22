@@ -1,7 +1,10 @@
-from game import Game
-from starfield import Starfield
+from logic.game import Game
+from logic.starfield import Starfield
+from logic.DEMO_starfield import DemoStarfield
 
 game = Game()
 starfield = Starfield(game)
 game.set_starfield(starfield)
+starfield = DemoStarfield(game)
+game.set_demo_starfield(starfield)
 game.run()

@@ -8,13 +8,12 @@ class Star:
         self.screen = game.fake_screen
         self.pos3d = self.get_pos3d()
         self.vel = random.uniform(0.05, 0.25)
-        self.color = random.choice(COLORS)
-        self.size = INITIAL_SIZE
+        self.sprite = pygame.image.load("graphics/star.png")
+        self.current_rotation_angle = random.randint(0, 360)
+        self.sprite = pygame.transform.rotate(self.sprite, self.current_rotation_angle) # Random rotation
         self.screen_pos = vec2(0, 0)
+        self.rect = self.sprite.get_rect(topleft = self.screen_pos)
         self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
-
-        self.is_rotating = False  # New variable to track rotation state
-        self.rotation_amount = 0.0  # New variable to track cumulative rotation
         self.position_offset = vec2(0, 0)  # New variable to track cumulative position offset
 
     def get_pos3d(self):
@@ -31,15 +30,17 @@ class Star:
 
         self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
+        self.rect.topleft = self.screen_pos #Update rect position
 
-        self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)  # Rotate the star
+        self.current_rotation_angle += STAR_ROTATION_VELOCITY
+        if self.current_rotation_angle >= 360: self.current_rotation_angle = self.current_rotation_angle % 360 #Angle wrapping
+        #self.sprite = pygame.transform.rotate(self.sprite, self.current_rotation_angle)
 
         if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
             # Rotate
-            self.pos3d.xy = self.pos3d.xy.rotate(0.1)
+            self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)
             # Mouse control
-            self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
-            
+            self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER 
 
     def draw(self):
-        pygame.draw.rect(self.screen, self.color, (*self.screen_pos, self.size, self.size))
+        self.screen.blit(self.sprite, self.screen_pos)

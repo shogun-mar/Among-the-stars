@@ -1,6 +1,6 @@
 from settings import *
-from star import Star
-from enemy import Enemy
+from logic.star import Star
+from logic.enemy import Enemy
 
 class Starfield:
     def __init__(self, game):

@@ -1,5 +1,5 @@
 import pygame
-from gameState import GameState
+from states.gameState import GameState
 from settings import *
 
 def handle_gameplay_events(game, key):

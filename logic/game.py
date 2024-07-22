@@ -1,11 +1,12 @@
 import pygame
 from os import environ
+from random import randint
 from sys import exit
 from ctypes import windll
 from settings import *
-from gameState import GameState
-from gameplayState import *
-from startMenuState import *
+from states.gameState import GameState
+from states.gameplayState import *
+from states.startMenuState import *
 
 class Game:
     def __init__(self):
@@ -16,13 +17,14 @@ class Game:
         window_icon = pygame.image.load("graphics/icon.png")
         pygame.display.set_icon(window_icon)
         pygame.display.set_caption("Among the stars")
-        self.alpha_surface = pygame.Surface(RESOLUTION)
+        self.alpha_surface = pygame.Surface(RESOLUTION, pygame.SRCALPHA)
         self.alpha_surface.set_alpha(ALPHA_VALUE)
         self.clock = pygame.time.Clock()
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE]) # Allow only specific events (for performance reasons)
 
         #Starfield object
         self.starfield = None
+        self.demo_starfield = None
         
         #Game variables
         self.game_state = GameState.STARTMENU
@@ -82,6 +84,9 @@ class Game:
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
             self.starfield.update(self)
+        elif self.game_state == GameState.STARTMENU:
+            self.demo_starfield.update(self)
+            if randint(0, 100) < 10: self.demo_starfield.switch() #Switch between hyperspace and starfield 
 
     def render(self):
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
@@ -98,23 +103,34 @@ class Game:
         self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
 
-    def set_starfield(self, starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
-        self.starfield = starfield
-
     def check_collisions(self, mouse_pos):
         if pygame.mouse.get_pressed()[0]:  # Separated the two conditions to call get_ticks only when needed
             current_time = pygame.time.get_ticks()
             if current_time - self.last_action_time > self.action_cooldown:
                 self.last_action_time = current_time  # Update last action time
-                for enemy in list(self.starfield.enemies):  # Make a shallow copy for safe removal
-                    if enemy.rect.collidepoint(mouse_pos):
-                        self.starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
-                        self.starfield.surf_to_draw.remove(enemy)  # Correctly remove the enemy from the list to draw
-                        self.update_score(1)
+                if self.is_mouse_over_star(mouse_pos) == False: 
+                    for enemy in list(self.starfield.enemies):  # Make a shallow copy for safe removal
+                        if enemy.rect.collidepoint(mouse_pos):
+                            self.starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
+                            self.starfield.surf_to_draw.remove(enemy)  # Correctly remove the enemy from the list to draw
+                            self.update_score(1)
+                            break
+
+    def is_mouse_over_star(self, mouse_pos):
+        for star in self.starfield.stars:
+            if star.rect.collidepoint(mouse_pos):
+                return True
+        return False
 
     def quit_game(self):
         pygame.quit()
         exit()
+
+    def set_starfield(self, starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
+        self.starfield = starfield
+
+    def set_demo_starfield(self, demo_starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
+        self.demo_starfield = demo_starfield
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window
