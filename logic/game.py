@@ -128,34 +128,6 @@ class Game:
         self.rendered_score = self.score_font.render(f"Score:{self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
 
-    def check_collisions(self, mouse_pos):
-        if pygame.mouse.get_pressed()[0]: # Separated the two conditions to call get_ticks only when needed
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_attack_time > self.attack_cooldown:
-                self.last_attack_time = current_time  # Update last action time
-                if not self.is_mouse_over_star(mouse_pos):  # Check if the mouse is not over a star
-                    # Check for enemy collision
-                    for enemy in list(self.game_starfield.enemies):  # Make a shallow copy for safe removal
-                        if enemy.rect.collidepoint(mouse_pos):
-                            self.game_starfield.enemies.remove(enemy)  # Remove the enemy from the list
-                            self.game_starfield.surf_to_draw.remove(enemy)  # Remove the enemy from the list to draw
-                            self.update_score(1)
-                            return  # Exit the method after finding and removing the enemy
-
-                    # Check for powerup collision
-                    for powerup in list(self.game_starfield.powerups):  # Assuming powerups are stored in a list
-                        if powerup.rect.collidepoint(mouse_pos):
-                            activate_powerup(powerup)  # Activate the powerup
-                            self.game_starfield.powerups.remove(powerup)  # Remove the powerup from the list
-                            self.game_starfield.surf_to_draw.remove(powerup)  # Remove the powerup from the list to draw
-                            return  # Exit the method after activating the powerup
-
-    def is_mouse_over_star(self, mouse_pos):
-        for star in self.game_starfield.stars:
-            if star.rect.collidepoint(mouse_pos):
-                return True
-        return False
-
     def quit_game(self):
         pygame.quit()
         exit()

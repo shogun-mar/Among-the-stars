@@ -23,7 +23,7 @@ def handle_gameplay_events(game, key):
 
 def handle_gameplay_events_mouse(game, button, mouse_pos):
     if button == 1: #Left mouse button
-        game.check_collisions(mouse_pos)
+        check_collisions(game, mouse_pos)
 
 def render_gameplay(game):
     game.fake_screen.blit(game.alpha_surface, (0,0)) 
@@ -32,10 +32,33 @@ def render_gameplay(game):
     game.fake_screen.blit(game.rendered_score, game.rendered_score_rect)
     if circle_progress != 1:draw_attack_cooldown_circle(game) # Draw attack cooldown circle if not fully charged
     
-def render_hyperspace_cooldown_bar(game):
-    cooldown_percentage = (pygame.time.get_ticks() - game.last_hyperspace_travel_time) / game.hyperspace_travel_maximum_duration
-    cooldown_width = int(SCREEN_WIDTH * cooldown_percentage)
-    pygame.draw.rect(game.fake_screen, (255, 0, 255), (0, 0, cooldown_width, 10))
+def check_collisions(game, mouse_pos):
+        if pygame.mouse.get_pressed()[0]: # Separated the two conditions to call get_ticks only when needed
+            current_time = pygame.time.get_ticks()
+            if current_time - game.last_attack_time > game.attack_cooldown:  # Check if the attack cooldown has passed
+                game.last_attack_time = current_time  # Update last action time
+                if not is_mouse_over_star(game, mouse_pos):  # Check if the mouse is not over a star
+                    # Check for enemy collision
+                    for enemy in list(game.game_starfield.enemies):  # Make a shallow copy for safe removal
+                        if enemy.rect.collidepoint(mouse_pos):
+                            game.game_starfield.enemies.remove(enemy)  # Remove the enemy from the list
+                            game.game_starfield.surf_to_draw.remove(enemy)  # Remove the enemy from the list to draw
+                            game.update_score(1)
+                            return  # Exit the method after finding and removing the enemy
+
+                    # Check for powerup collision
+                    for powerup in list(game.game_starfield.powerups):  # Assuming powerups are stored in a list
+                        if powerup.rect.collidepoint(mouse_pos):
+                            activate_powerup(powerup)  # Activate the powerup
+                            game.game_starfield.powerups.remove(powerup)  # Remove the powerup from the list
+                            game.game_starfield.surf_to_draw.remove(powerup)  # Remove the powerup from the list to draw
+                            return  # Exit the method after activating the powerup
+                        
+def is_mouse_over_star(game, mouse_pos):
+        for star in game.game_starfield.stars:
+            if star.rect.collidepoint(mouse_pos):
+                return True
+        return False
 
 def activate_powerup(powerup):
     if powerup.type == 'life':
@@ -44,7 +67,12 @@ def activate_powerup(powerup):
         print("Cooldown powerup activated")
     elif powerup.type == 'score':
         print("Score powerup activated")
-        #self.update_score(5)
+        #game.update_score(5)
+
+def render_hyperspace_cooldown_bar(game):
+    cooldown_percentage = (pygame.time.get_ticks() - game.last_hyperspace_travel_time) / game.hyperspace_travel_maximum_duration
+    cooldown_width = int(SCREEN_WIDTH * cooldown_percentage)
+    pygame.draw.rect(game.fake_screen, 'crimson', (0, 0, cooldown_width, 10))
 
 def draw_attack_cooldown_circle(game):
     global circle_progress
