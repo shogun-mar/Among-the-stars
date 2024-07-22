@@ -6,7 +6,7 @@ from logic.powerup import PowerUp
 from logic.enemy import Enemy
 
 heart_sprite = pygame.image.load("graphics/heart_icon.png")
-heart_rects = [heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - 30 - i * 30, 70)) for i in range(3)]
+heart_rects = [heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - i * 30, 70)) for i in range(3)]
 
 circle_progress = 0 # Progress of the attack cooldown circle
 
