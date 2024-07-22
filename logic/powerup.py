@@ -1,17 +1,20 @@
-import pygame
-import random, math
+import random, math, pygame
 from settings import *
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 
-class Enemy:
+class PowerUp:
     def __init__(self, game):
         self.screen = game.fake_screen
         self.pos3d = self.get_pos3d()
         self.vel = random.uniform(0.05, 0.25)
-        self.sprite = pygame.image.load('graphics/spaceship_enemy.png')
-        self.rect = self.sprite.get_rect(topleft = (0, 0))
-        self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
+        self.type = random.choices(['life', 'cooldown', 'score'])
+        self.sprite = pygame.image.load(f"graphics/{type}_powerup.png")
+        self.current_rotation_angle = random.randint(0, 360)
+        self.sprite = pygame.transform.rotate(self.sprite, self.current_rotation_angle) # Random rotation
+        self.screen_pos = vec2(0, 0)
+        self.rect = self.sprite.get_rect(topleft = self.screen_pos)
+        self.mouse_offset = vec2(0, 0) # New variable to track mouse offset
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
@@ -24,14 +27,15 @@ class Enemy:
         self.pos3d.z -= self.vel
         self.pos3d = self.get_pos3d() if self.pos3d.z < 1 else self.pos3d
 
-        self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
+        self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
+        self.rect.topleft = self.screen_pos #Update rect position
 
         if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
             # Rotate
             self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)
             # Mouse control
-            self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
+            self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER 
 
     def draw(self):
-        self.screen.blit(self.sprite, self.rect)
+        self.screen.blit(self.sprite, self.screen_pos)

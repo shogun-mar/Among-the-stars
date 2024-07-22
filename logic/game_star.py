@@ -14,12 +14,10 @@ class Star:
         self.screen_pos = vec2(0, 0)
         self.rect = self.sprite.get_rect(topleft = self.screen_pos)
         self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
-        self.position_offset = vec2(0, 0)  # New variable to track cumulative position offset
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
-        radius = random.randrange( SCREEN_HEIGHT // SCALE_POS,  SCREEN_HEIGHT) * SCALE_POS #For game_starfield
-        #radius = random.randrange( SCREEN_HEIGHT // 4,  SCREEN_HEIGHT //3) * SCALE_POS #For hyperspace tunnel
+        radius = random.randrange( SCREEN_HEIGHT // SCALE_POS,  SCREEN_HEIGHT) * SCALE_POS
         x = radius * math.sin(angle)
         y = radius * math.cos(angle)
         return vec3(x, y, Z_DISTANCE)
@@ -31,10 +29,6 @@ class Star:
         self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
         self.rect.topleft = self.screen_pos #Update rect position
-
-        self.current_rotation_angle += STAR_ROTATION_VELOCITY
-        if self.current_rotation_angle >= 360: self.current_rotation_angle = self.current_rotation_angle % 360 #Angle wrapping
-        #self.sprite = pygame.transform.rotate(self.sprite, self.current_rotation_angle)
 
         if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
             # Rotate

@@ -8,6 +8,7 @@ from states.gameState import GameState
 from states.gameplayState import *
 from states.startMenuState import *
 from states.hyperspaceState import *
+from states.helpMenuState import *
 
 class Game:
     def __init__(self):
@@ -84,11 +85,15 @@ class Game:
 
                     elif self.game_state == GameState.HYPERSPACE:
                         handle_hyperspace_events(self, event.key)
+                    
+                    elif self.game_state == GameState.HELPMENU:
+                        handle_help_menu_events(self, event.key)
 
                 #Mouse related events
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.game_state == GameState.GAMEPLAY: handle_gameplay_events_mouse(self, event.button, pygame.mouse.get_pos())
                     elif self.game_state == GameState.STARTMENU: handle_start_menu_events_mouse(self, event.button, pygame.mouse.get_pos())           
+                    elif self.game_state == GameState.HELPMENU: handle_help_menu_events_mouse(self, event.button, pygame.mouse.get_pos())
 
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
@@ -107,6 +112,7 @@ class Game:
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
         elif self.game_state == GameState.STARTMENU: render_start_menu(self)
         elif self.game_state == GameState.HYPERSPACE: render_hyperspace(self)
+        elif self.game_state == GameState.HELPMENU: render_help_menu(self)
         elif self.game_state == GameState.PAUSE:
             pass
 
