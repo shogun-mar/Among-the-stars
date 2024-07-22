@@ -26,8 +26,7 @@ class Starfield:
                 self.powerups.append(PowerUp(game))
                 self.surf_to_draw = self.stars + self.enemies + self.powerups
 
-        [surf.update() for surf in self.surf_to_draw] #Update all before drawing to have consistent movement
-        #Update stars, powerups and enemies
+        [surf.update() for surf in self.surf_to_draw] #Update all surfaces before drawing to have consistent movement
 
     def draw(self):
         self.surf_to_draw.sort(key=lambda surf: surf.pos3d.z, reverse = True) #Painter's algorithm
