@@ -15,7 +15,7 @@ class Enemy:
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
-        radius = random.randrange( SCREEN_HEIGHT // SCALE_POS,  SCREEN_HEIGHT) * SCALE_POS #For starfield
+        radius = random.randrange( SCREEN_HEIGHT // SCALE_POS,  SCREEN_HEIGHT) * SCALE_POS #For game_starfield
         #radius = random.randrange( SCREEN_HEIGHT // 4,  SCREEN_HEIGHT //3) * SCALE_POS #For hyperspace tunnel
         x = radius * math.sin(angle)
         y = radius * math.cos(angle)

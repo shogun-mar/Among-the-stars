@@ -1,10 +1,10 @@
 from settings import *
-from logic.DEMO_star import DemoStar
+from logic.hyperspace_star import HyperspaceStar
 
-class DemoStarfield:
+class HyperspaceStarfield:
     def __init__(self, game):
         self.game = game
-        self.stars = [DemoStar(game) for _ in range(DEMO_STARS_NUM)]
+        self.stars = [HyperspaceStar(game) for _ in range(DEMO_STARS_NUM)]
         self.game.set_starfield(self)
 
     def update(self, game):

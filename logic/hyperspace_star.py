@@ -3,7 +3,7 @@ from settings import *
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 
-class DemoStar:
+class HyperspaceStar:
     def __init__(self, game):
         self.screen = game.fake_screen
         self.pos3d = self.get_pos3d()

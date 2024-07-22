@@ -18,13 +18,13 @@ class Game:
         pygame.display.set_icon(window_icon)
         pygame.display.set_caption("Among the stars")
         self.alpha_surface = pygame.Surface(RESOLUTION)
-        self.alpha_surface.set_alpha(DEMO_ALPHA_VALUE)
+        self.alpha_surface.set_alpha(HYPERSPACE_ALPHA_VALUE)
         self.clock = pygame.time.Clock()
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE]) # Allow only specific events (for performance reasons)
 
         #Starfield object
-        self.starfield = None
-        self.demo_starfield = None
+        self.game_starfield = None
+        self.hyperspace_starfield = None
         
         #Game variables
         self.game_state = GameState.STARTMENU
@@ -43,7 +43,6 @@ class Game:
 
     def run(self):
         while True:
-            print(self.game_state)
             self.handle_events()
             self.update_logic()
             self.render()
@@ -84,10 +83,10 @@ class Game:
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
-            self.starfield.update(self)
-        elif self.game_state == GameState.STARTMENU:
-            self.demo_starfield.update(self)
-            if randint(0, 100) < 10: self.demo_starfield.switch() #Switch between hyperspace and starfield 
+            self.game_starfield.update(self)
+        elif self.game_state == GameState.STARTMENU or self.game_state == GameState.HYPERSPACE:
+            self.hyperspace_starfield.update(self)
+
 
     def render(self):
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
@@ -110,15 +109,15 @@ class Game:
             if current_time - self.last_action_time > self.action_cooldown:
                 self.last_action_time = current_time  # Update last action time
                 if self.is_mouse_over_star(mouse_pos) == False: 
-                    for enemy in list(self.starfield.enemies):  # Make a shallow copy for safe removal
+                    for enemy in list(self.game_starfield.enemies):  # Make a shallow copy for safe removal
                         if enemy.rect.collidepoint(mouse_pos):
-                            self.starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
-                            self.starfield.surf_to_draw.remove(enemy)  # Correctly remove the enemy from the list to draw
+                            self.game_starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
+                            self.game_starfield.surf_to_draw.remove(enemy)  # Correctly remove the enemy from the list to draw
                             self.update_score(1)
                             break
 
     def is_mouse_over_star(self, mouse_pos):
-        for star in self.starfield.stars:
+        for star in self.game_starfield.stars:
             if star.rect.collidepoint(mouse_pos):
                 return True
         return False
@@ -127,11 +126,11 @@ class Game:
         pygame.quit()
         exit()
 
-    def set_starfield(self, starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
-        self.starfield = starfield
+    def set_starfield(self, game_starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
+        self.game_starfield = game_starfield
 
-    def set_demo_starfield(self, demo_starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
-        self.demo_starfield = demo_starfield
+    def set_hyperspace_starfield(self, hyperspace_starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
+        self.hyperspace_starfield = hyperspace_starfield
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

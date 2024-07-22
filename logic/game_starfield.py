@@ -1,5 +1,5 @@
 from settings import *
-from logic.star import Star
+from logic.game_star import Star
 from logic.enemy import Enemy
 
 class Starfield:

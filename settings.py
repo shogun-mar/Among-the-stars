@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 
 RESOLUTION = SCREEN_WIDTH,  SCREEN_HEIGHT = (1600, 900)
 FLAGS = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
@@ -13,19 +14,20 @@ ENEMY_RESPAWN_COOLDOWN = 3 #Expressed in seconds
 
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f
+HYPERSPACE_KEY = pygame.K_e
+PAUSE_KEY = pygame.K_p
 
 #Game variables
 ROTATION_VELOCITY = 0.1
 
-#For starfield
+#For game_starfield
 NUM_STARS = 350
-STARFIELD_COLORS = 'red green blue yellow cyan magenta white'.split()
-Z_DISTANCE = 40
+Z_DISTANCE = 40 #40
 GAMEPLAY_ALPHA_VALUE = 128
 
-#For demo starfield
-DEMO_COLORS = 'blue cyan skyblue purple magenta'.split()
-DEMO_ALPHA_VALUE = 30 
+#For demo game_starfield
+DEMO_COLORS = 'mediumpurple3 indigo crimson seagreen1 salmon1 purple2 plum3 palevioletred violetred springgreen4 steelblue4 steelblue slateblue4 slateblue sienna2 blue cyan skyblue purple magenta red green blue yellow cyan magenta white'.split()
+HYPERSPACE_ALPHA_VALUE = 30 
 DEMO_Z_DISTANCE = 140
-DEMO_STARS_NUM = 1000 #2000
+DEMO_STARS_NUM = randint(250, 1000)
 DEMO_STAR_INITIAL_SIZE = 10

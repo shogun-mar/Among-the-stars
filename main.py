@@ -1,10 +1,10 @@
 from logic.game import Game
-from logic.starfield import Starfield
-from logic.DEMO_starfield import DemoStarfield
+from logic.game_starfield import Starfield
+from logic.hyperspace_starfield import HyperspaceStarfield
 
 game = Game()
-starfield = Starfield(game)
-game.set_starfield(starfield)
-demo_starfield = DemoStarfield(game)
-game.set_demo_starfield(demo_starfield)
+hyperspace_starfield = HyperspaceStarfield(game)
+game.set_hyperspace_starfield(hyperspace_starfield)
+game_starfield = Starfield(game)
+game.set_starfield(game_starfield)
 game.run()

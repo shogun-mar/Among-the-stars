@@ -21,12 +21,12 @@ def handle_start_menu_events_mouse(game, button, mouse_pos):
     if play_text_rect.collidepoint(mouse_pos) and button == 1: #Left mouse button
         game.game_state = GameState.GAMEPLAY
         game.alpha_surface.set_alpha(GAMEPLAY_ALPHA_VALUE)
-    if help_text_rect.collidepoint(mouse_pos) and button == 1:
+    elif help_text_rect.collidepoint(mouse_pos) and button == 1:
         game.game_state = GameState.HELPMENU
 
 def render_start_menu(game):
     game.fake_screen.blit(game.alpha_surface, (0, 0))
-    game.demo_starfield.draw()
+    game.hyperspace_starfield.draw()
     game.fake_screen.blit(logo_text, logo_text_rect)
     game.fake_screen.blit(play_text, play_text_rect)
     game.fake_screen.blit(help_text, help_text_rect)
