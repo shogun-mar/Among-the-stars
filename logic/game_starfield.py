@@ -2,6 +2,7 @@ from settings import *
 from logic.game_star import Star
 from logic.enemy import Enemy
 from logic.powerup import PowerUp
+from logic.projectile import Projectile
 
 class Starfield:
     def __init__(self, game):
@@ -10,6 +11,7 @@ class Starfield:
         self.enemies = []
         self.powerups = []
         self.projectiles = []
+        self.objects_to_remove = []
         self.last_enemy_respawn_time = 0
         self.last_powerup_respawn_time = 0
         self.surf_to_draw = self.stars + self.enemies + self.powerups + self.projectiles
@@ -28,6 +30,27 @@ class Starfield:
                 self.surf_to_draw = self.stars + self.enemies + self.powerups + self.projectiles
 
         [surf.update() for surf in self.surf_to_draw] #Update all surfaces before drawing to have consistent movement
+
+        # Iterate through the objects to remove and remove them from the respective lists
+        # This is done to avoid modifying the list while iterating through it
+        for object in self.objects_to_remove:
+            if isinstance(object, Projectile) and object in self.projectiles:
+                self.projectiles.remove(object)
+            elif isinstance(object, Enemy) and object in self.enemies:
+                self.enemies.remove(object)
+            elif isinstance(object, PowerUp) and object in self.powerups:
+                self.powerups.remove(object)
+
+        self.objects_to_remove.clear()  # Clear the list of objects to remove
+
+    """#Iterate through the objects to remove and remove them from the respective lists
+        #This is done to avoid modifying the list while iterating through it
+        for object in self.objects_to_remove:
+            if isinstance(object, Projectile): self.projectiles.remove(object)
+            elif isinstance(object, Enemy): self.enemies.remove(object)
+            elif isinstance(object, PowerUp): self.powerups.remove(object) 
+        
+        self.objects_to_remove.clear() #Clear the list of objects to remove"""
 
     def draw(self):
         self.surf_to_draw.sort(key=lambda surf: surf.pos3d.z, reverse = True) #Painter's algorithm

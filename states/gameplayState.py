@@ -45,17 +45,11 @@ def check_collisions(game, mouse_pos):
             circle_progress = 0  # Reset the attack cooldown circle progress
 
             if not is_mouse_over_star(game, mouse_pos):  # Check if the mouse is not over a star
-                elements_to_check = list(game.game_starfield.enemies) + list(game.game_starfield.powerups) # Combine enemies and powerups into a single list
+                elements_to_check = game.game_starfield.enemies + game.game_starfield.powerups # Combine enemies and powerups into a single list
                 elements_to_check.sort(key=lambda element: element.pos3d.z, reverse=True)  # Sort the list by z distance in descending order
                 for element in elements_to_check:  # Iterate over the combined list
                     if element.rect.collidepoint(mouse_pos):  # Check for collision with the mouse position
-                        game.game_starfield.surf_to_draw.remove(element)  # Remove the element from the list to draw
-                        if isinstance(element, PowerUp): 
-                            game.game_starfield.powerups.remove(element)  # Remove the powerup from the list
-                            activate_powerup(element)  # Check if the element is a powerup
-                        elif isinstance(element, Enemy): 
-                            game.game_starfield.enemies.remove(element)  # Remove the enemy from the list
-                            game.update_score(1) # Check if the element is an enemy
+                        game.game_starfield.objects_to_remove.append(element)  # Add the element to the list of objects to remove
                         return  # Exit the method after finding and removing the element
                         
 def is_mouse_over_star(game, mouse_pos):

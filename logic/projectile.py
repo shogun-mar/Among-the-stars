@@ -7,7 +7,7 @@ class Projectile:
         self.sprite = pygame.image.load('graphics/projectile.png')
         self.rect = self.sprite.get_rect(midtop = pos)
         self.pos3d = self.get_pos3d()
-        self.target_pos = pygame.math.Vector2((SCREEN_HEIGHT, SCREEN_WIDTH // 2))
+        self.target_pos = pygame.math.Vector2((SCREEN_WIDTH // 2, SCREEN_HEIGHT))
         self.screen_pos = vec2(0, 0)
         self.vel = PROJECTILE_VELOCITY  # Projectile velocity
         
@@ -16,16 +16,21 @@ class Projectile:
         return self.original_entity.pos3d
     
     def update(self):
-        print(self.rect.midbottom)
-        # Remove the projectile if it reaches the target
-        if self.rect.midbottom == self.target_pos:
-            #print("Projectile reached target")
-            self.original_entity.game.life_points -= 1 # Remove a life point 
-            self.original_entity.game.game_starfield.projectiles.remove(self) # Remove the projectile from the list
+        # Calculate direction vector (from projectile to target)
+        direction = self.target_pos - pygame.math.Vector2(self.rect.center)
+        distance = direction.length()  # Calculate the distance to the target
+
+        if distance <= self.vel:
+            # If close enough, place the projectile directly at the target position
+            self.rect.center = self.target_pos
+            # Removing the projectile, subtracting life points
+            self.original_entity.game.life_points -= 1
+            self.original_entity.game.game_starfield.objects_to_remove.append(self)
+            
         else:
-            # Otherwise move the projectile towards the target
-            direction = (self.target_pos - self.rect.center).normalize()
-            self.rect.center += direction * self.vel # Move the projectile
+            # Normalize the direction vector and move the projectile towards the target
+            direction.normalize_ip() #Adjust the direction vector to have a length of 1 withouth changing the direction
+            self.rect.center += direction * self.vel
 
     def draw(self):
         self.original_entity.screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile
