@@ -1,6 +1,7 @@
 from settings import *
 from logic.game_star import Star
 from logic.enemy import Enemy
+from logic.powerup import PowerUp
 
 class Starfield:
     def __init__(self, game):
@@ -11,7 +12,6 @@ class Starfield:
         self.last_enemy_respawn_time = 0
         self.last_powerup_respawn_time = 0
         self.surf_to_draw = self.stars + self.enemies + self.powerups
-        self.game.set_starfield(self)
 
     def update(self, game):
         current_time = pygame.time.get_ticks()
@@ -23,9 +23,9 @@ class Starfield:
         if len(self.powerups) < MAX_NUM_POWERUPS_SCREEN:
             if current_time - self.last_powerup_respawn_time > POWERUP_RESPAWN_COOLDOWN:
                 self.last_powerup_respawn_time = current_time
-                self.powerups.append(Enemy(game, is_powerup = True))
+                self.powerups.append(PowerUp(game))
                 self.surf_to_draw = self.stars + self.enemies + self.powerups
-                
+
         [star.update() for star in self.stars] #Update all before drawing to have consistent movement
         [enemy.update() for enemy in self.enemies] #Update all before drawing to have consistent movement
 

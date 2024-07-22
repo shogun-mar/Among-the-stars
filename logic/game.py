@@ -37,14 +37,15 @@ class Game:
         self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
 
-        self.action_cooldown: int = 1000  # Cooldown in milliseconds
-        self.last_action_time: int = 0  # Time of the last action
+        self.attack_cooldown: int = 1000  # Cooldown in milliseconds
+        self.last_attack_time: int = 0  # Time of the last action
 
         self.hyperspace_travel_maximum_duration: int = 5000 #Maximum time for the hyperspace travel in milliseconds
         self.hyperspace_travel_duration: int = 0 #Duration of the hyperspace travel in milliseconds
         self.last_hyperspace_travel_time: int = 0 #Time of the last hyperspace travel
         self.last_exit_from_hyperspace_time: int = 0 #Time of the last exit from hyperspace
 
+        self.life_points: int = 3
 
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
@@ -99,6 +100,8 @@ class Game:
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
             self.game_starfield.update(self)
+            if self.life_points == 0:
+                self.quit_game()
         elif self.game_state == GameState.STARTMENU:
             self.hyperspace_starfield.update(self)
         elif self.game_state == GameState.HYPERSPACE:
@@ -122,27 +125,45 @@ class Game:
 
     def update_score(self, amount):
         self.score += amount
-        self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
+        self.rendered_score = self.score_font.render(f"Score:{self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
 
     def check_collisions(self, mouse_pos):
-        if pygame.mouse.get_pressed()[0]:  # Separated the two conditions to call get_ticks only when needed
+        if pygame.mouse.get_pressed()[0]: # Separated the two conditions to call get_ticks only when needed
             current_time = pygame.time.get_ticks()
-            if current_time - self.last_action_time > self.action_cooldown:
-                self.last_action_time = current_time  # Update last action time
-                if self.is_mouse_over_star(mouse_pos) == False: 
+            if current_time - self.last_attack_time > self.attack_cooldown:
+                self.last_attack_time = current_time  # Update last action time
+                if not self.is_mouse_over_star(mouse_pos):  # Check if the mouse is not over a star
+                    # Check for enemy collision
                     for enemy in list(self.game_starfield.enemies):  # Make a shallow copy for safe removal
                         if enemy.rect.collidepoint(mouse_pos):
-                            self.game_starfield.enemies.remove(enemy)  # Correctly remove the enemy from the list
-                            self.game_starfield.surf_to_draw.remove(enemy)  # Correctly remove the enemy from the list to draw
+                            self.game_starfield.enemies.remove(enemy)  # Remove the enemy from the list
+                            self.game_starfield.surf_to_draw.remove(enemy)  # Remove the enemy from the list to draw
                             self.update_score(1)
-                            break
+                            return  # Exit the method after finding and removing the enemy
+
+                    # Check for powerup collision
+                    for powerup in list(self.game_starfield.powerups):  # Assuming powerups are stored in a list
+                        if powerup.rect.collidepoint(mouse_pos):
+                            self.activate_powerup(powerup)  # Activate the powerup
+                            self.game_starfield.powerups.remove(powerup)  # Remove the powerup from the list
+                            self.game_starfield.surf_to_draw.remove(powerup)  # Remove the powerup from the list to draw
+                            return  # Exit the method after activating the powerup
 
     def is_mouse_over_star(self, mouse_pos):
         for star in self.game_starfield.stars:
             if star.rect.collidepoint(mouse_pos):
                 return True
         return False
+    
+    def activate_powerup(self, powerup):
+        if powerup.type == 'life':
+            pass
+        elif powerup.type == 'cooldown':
+            pass
+        elif powerup.type == 'score':
+            pass
+            #self.update_score(5)
 
     def quit_game(self):
         pygame.quit()
@@ -160,8 +181,8 @@ class Game:
         # Get a handle to the device context for the desktop window
         dc = windll.user32.GetWindowDC(desktop)
         # Get the physical resolution
-        hw_screen_width = windll.gdi32.GetDeviceCaps(dc, 8)  # HORIZONTAL RES
-        hw_screen_height = windll.gdi32.GetDeviceCaps(dc, 10)  # VERTICAL RES
+        hw_screen_width = windll.gdi32.GetDeviceCaps(dc, 8) # HORIZONTAL RES
+        hw_screen_height = windll.gdi32.GetDeviceCaps(dc, 10) # VERTICAL RES
         # Release the device context
         windll.user32.ReleaseDC(desktop, dc)
 

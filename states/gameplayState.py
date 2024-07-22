@@ -2,6 +2,9 @@ import pygame
 from states.gameState import GameState
 from settings import *
 
+heart_sprite = pygame.image.load("graphics/heart_icon.png")
+heart_rects = [heart_sprite.get_rect(topleft = (SCREEN_WIDTH - 30 - i * 30, 10)) for i in range(3)]
+
 def handle_gameplay_events(game, key):
     if key == PAUSE_KEY:
         game.game_state = GameState.PAUSE
