@@ -12,6 +12,7 @@ MAX_NUM_ENEMIES_SCREEN = 4
 MAX_NUM_POWERUPS_SCREEN = 3
 ENEMY_RESPAWN_COOLDOWN = 3 #Expressed in seconds
 POWERUP_RESPAWN_COOLDOWN = 10 #Expressed in seconds
+ATTACK_COOLDOWN = 5000 #Expressed in milliseconds
 
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f

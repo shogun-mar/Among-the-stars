@@ -37,7 +37,7 @@ class Game:
         self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
 
-        self.attack_cooldown: int = 1000  # Cooldown in milliseconds
+        self.attack_cooldown: int = ATTACK_COOLDOWN
         self.last_attack_time: int = 0  # Time of the last action
 
         self.hyperspace_travel_maximum_duration: int = 5000 #Maximum time for the hyperspace travel in milliseconds
@@ -145,7 +145,7 @@ class Game:
                     # Check for powerup collision
                     for powerup in list(self.game_starfield.powerups):  # Assuming powerups are stored in a list
                         if powerup.rect.collidepoint(mouse_pos):
-                            self.activate_powerup(powerup)  # Activate the powerup
+                            activate_powerup(powerup)  # Activate the powerup
                             self.game_starfield.powerups.remove(powerup)  # Remove the powerup from the list
                             self.game_starfield.surf_to_draw.remove(powerup)  # Remove the powerup from the list to draw
                             return  # Exit the method after activating the powerup
@@ -155,15 +155,6 @@ class Game:
             if star.rect.collidepoint(mouse_pos):
                 return True
         return False
-    
-    def activate_powerup(self, powerup):
-        if powerup.type == 'life':
-            pass
-        elif powerup.type == 'cooldown':
-            pass
-        elif powerup.type == 'score':
-            pass
-            #self.update_score(5)
 
     def quit_game(self):
         pygame.quit()
