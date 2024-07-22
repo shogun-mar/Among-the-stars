@@ -17,8 +17,8 @@ class Game:
         window_icon = pygame.image.load("graphics/icon.png")
         pygame.display.set_icon(window_icon)
         pygame.display.set_caption("Among the stars")
-        self.alpha_surface = pygame.Surface(RESOLUTION, pygame.SRCALPHA)
-        self.alpha_surface.set_alpha(ALPHA_VALUE)
+        self.alpha_surface = pygame.Surface(RESOLUTION)
+        self.alpha_surface.set_alpha(DEMO_ALPHA_VALUE)
         self.clock = pygame.time.Clock()
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE]) # Allow only specific events (for performance reasons)
 
@@ -43,6 +43,7 @@ class Game:
 
     def run(self):
         while True:
+            print(self.game_state)
             self.handle_events()
             self.update_logic()
             self.render()

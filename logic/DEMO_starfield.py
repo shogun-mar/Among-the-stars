@@ -1,10 +1,10 @@
 from settings import *
-from logic.star import Star
+from logic.DEMO_star import DemoStar
 
 class DemoStarfield:
     def __init__(self, game):
         self.game = game
-        self.stars = [Star(game) for _ in range(DEMO_STARS_NUM)]
+        self.stars = [DemoStar(game) for _ in range(DEMO_STARS_NUM)]
         self.game.set_starfield(self)
 
     def update(self, game):

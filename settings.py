@@ -11,10 +11,6 @@ STAR_ROTATION_VELOCITY = 2
 MAX_NUM_ENEMIES_SCREEN = 4
 ENEMY_RESPAWN_COOLDOWN = 3 #Expressed in seconds
 
-DEMO_STARS_NUM = 1000
-DEMO_STAR_INITIAL_SIZE = 5
-START_MENU_ALPHA_VALUE = 128
-
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f
 
@@ -25,10 +21,11 @@ ROTATION_VELOCITY = 0.1
 NUM_STARS = 350
 STARFIELD_COLORS = 'red green blue yellow cyan magenta white'.split()
 Z_DISTANCE = 40
-ALPHA_VALUE = 128
+GAMEPLAY_ALPHA_VALUE = 128
 
-#For hyperspace tunnel 
-TUNNEL_COLORS = 'blue cyan skyblue purple magenta'.split()
-# Z_DISTANCE = 140
-# ALPHA_VALUE = 30
-# NUM_STARS = 2000
+#For demo starfield
+DEMO_COLORS = 'blue cyan skyblue purple magenta'.split()
+DEMO_ALPHA_VALUE = 30 
+DEMO_Z_DISTANCE = 140
+DEMO_STARS_NUM = 1000 #2000
+DEMO_STAR_INITIAL_SIZE = 10

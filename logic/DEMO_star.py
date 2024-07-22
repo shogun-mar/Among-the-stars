@@ -3,34 +3,28 @@ from settings import *
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 
-class Star:
+class DemoStar:
     def __init__(self, game):
         self.screen = game.fake_screen
         self.pos3d = self.get_pos3d()
-        self.vel = random.uniform(0.05, 0.25)
-        self.color = random.choice(STARFIELD_COLORS)
+        self.vel = random.uniform(0.45, 0.95)
+        self.color = random.choice(DEMO_COLORS)
         self.size = DEMO_STAR_INITIAL_SIZE
         self.screen_pos = vec2(0, 0)
-        self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
-
-        self.is_rotating = False  # New variable to track rotation state
-        self.rotation_amount = 0.0  # New variable to track cumulative rotation
-        self.position_offset = vec2(0, 0)  # New variable to track cumulative position offset
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
-        radius = random.randrange( SCREEN_HEIGHT // SCALE_POS,  SCREEN_HEIGHT) * SCALE_POS #For starfield
-        #radius = random.randrange( SCREEN_HEIGHT // 4,  SCREEN_HEIGHT //3) * SCALE_POS #For hyperspace tunnel
+        radius = random.randrange( SCREEN_HEIGHT // 4,  SCREEN_HEIGHT //3) * SCALE_POS
         x = radius * math.sin(angle)
         y = radius * math.cos(angle)
-        return vec3(x, y, Z_DISTANCE)
+        return vec3(x, y, DEMO_Z_DISTANCE)
 
     def update(self):
         self.pos3d.z -= self.vel
         self.pos3d = self.get_pos3d() if self.pos3d.z < 1 else self.pos3d
 
-        self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
-        self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
+        self.screen_pos = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER
+        self.size = (DEMO_Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
 
     def draw(self):
         pygame.draw.rect(self.screen, self.color, (*self.screen_pos, self.size, self.size))
