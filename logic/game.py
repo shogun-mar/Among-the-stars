@@ -42,6 +42,7 @@ class Game:
         self.hyperspace_travel_maximum_duration: int = 5000 #Maximum time for the hyperspace travel in milliseconds
         self.hyperspace_travel_duration: int = 0 #Duration of the hyperspace travel in milliseconds
         self.last_hyperspace_travel_time: int = 0 #Time of the last hyperspace travel
+        self.last_exit_from_hyperspace_time: int = 0 #Time of the last exit from hyperspace
 
 
         # Get physical resolution
@@ -91,16 +92,17 @@ class Game:
 
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
-        print("Current time: ", pygame.time.get_ticks(), "Last hyperspace travel time: ", self.last_hyperspace_travel_time, "Hyperspace travel duration: ", self.hyperspace_travel_duration)
         if self.game_state == GameState.GAMEPLAY:
             self.game_starfield.update(self)
-        elif self.game_state == GameState.STARTMENU or self.game_state == GameState.HYPERSPACE:
+        elif self.game_state == GameState.STARTMENU:
             self.hyperspace_starfield.update(self)
-        elif self.game_state == GameState.HYPERSPACE and (pygame.time.get_ticks() - self.last_hyperspace_travel_time > self.hyperspace_travel_duration):
-            print("Exiting hyperspace")
-            exit_from_hyperspace(self)
+        elif self.game_state == GameState.HYPERSPACE:
+            self.hyperspace_starfield.update(self)
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_hyperspace_travel_time > self.hyperspace_travel_duration:
+                self.last_exit_from_hyperspace_time = current_time
+                exit_from_hyperspace(self)
             
-
     def render(self):
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
         elif self.game_state == GameState.STARTMENU: render_start_menu(self)

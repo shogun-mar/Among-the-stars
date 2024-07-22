@@ -1,7 +1,7 @@
 import pygame
 from random import randint
 
-RESOLUTION = SCREEN_WIDTH,  SCREEN_HEIGHT = (1600, 900)
+RESOLUTION = SCREEN_WIDTH,  SCREEN_HEIGHT = (800, 450)
 FLAGS = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
 MAX_FPS = 60 #60 
 
@@ -21,7 +21,7 @@ PAUSE_KEY = pygame.K_p
 ROTATION_VELOCITY = 0.1
 
 #For game_starfield
-NUM_STARS = 350
+NUM_STARS = 300
 Z_DISTANCE = 40 #40
 GAMEPLAY_ALPHA_VALUE = 128
 

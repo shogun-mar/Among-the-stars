@@ -12,8 +12,8 @@ def handle_gameplay_events(game, key):
             game.game_state = GameState.HYPERSPACE
             game.last_hyperspace_travel_time = current_time
             game.hyperspace_travel_duration = temp_hyperspace_travel_time if temp_hyperspace_travel_time < game.hyperspace_travel_maximum_duration else game.hyperspace_travel_maximum_duration
-            print(f"Travel time: {game.hyperspace_travel_duration}")
             game.alpha_surface.set_alpha(HYPERSPACE_ALPHA_VALUE)
+            print(f"Entering hyperspace for {game.hyperspace_travel_duration} ms")
 
 def handle_gameplay_events_mouse(game, button, mouse_pos):
     if button == 1: #Left mouse button
