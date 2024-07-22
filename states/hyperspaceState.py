@@ -9,3 +9,7 @@ def handle_hyperspace_events(game, key):
 def render_hyperspace(game):
     game.fake_screen.blit(game.alpha_surface, (0, 0))
     game.hyperspace_starfield.draw()
+
+def exit_from_hyperspace(game):
+    game.game_state = GameState.GAMEPLAY
+    game.alpha_surface.set_alpha(GAMEPLAY_ALPHA_VALUE)

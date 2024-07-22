@@ -3,7 +3,7 @@ from random import randint
 
 RESOLUTION = SCREEN_WIDTH,  SCREEN_HEIGHT = (1600, 900)
 FLAGS = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
-MAX_FPS = 60
+MAX_FPS = 60 #60 
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 CENTER = vec2(SCREEN_WIDTH // 2,  SCREEN_HEIGHT // 2)

@@ -7,6 +7,7 @@ from settings import *
 from states.gameState import GameState
 from states.gameplayState import *
 from states.startMenuState import *
+from states.hyperspaceState import *
 
 class Game:
     def __init__(self):
@@ -37,6 +38,11 @@ class Game:
 
         self.action_cooldown: int = 1000  # Cooldown in milliseconds
         self.last_action_time: int = 0  # Time of the last action
+
+        self.hyperspace_travel_maximum_duration: int = 5000 #Maximum time for the hyperspace travel in milliseconds
+        self.hyperspace_travel_duration: int = 0 #Duration of the hyperspace travel in milliseconds
+        self.last_hyperspace_travel_time: int = 0 #Time of the last hyperspace travel
+
 
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
@@ -75,6 +81,9 @@ class Game:
                     elif self.game_state == GameState.STARTMENU:
                         handle_start_menu_events(self, event.key)
 
+                    elif self.game_state == GameState.HYPERSPACE:
+                        handle_hyperspace_events(self, event.key)
+
                 #Mouse related events
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.game_state == GameState.GAMEPLAY: handle_gameplay_events_mouse(self, event.button, pygame.mouse.get_pos())
@@ -82,15 +91,20 @@ class Game:
 
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
+        print("Current time: ", pygame.time.get_ticks(), "Last hyperspace travel time: ", self.last_hyperspace_travel_time, "Hyperspace travel duration: ", self.hyperspace_travel_duration)
         if self.game_state == GameState.GAMEPLAY:
             self.game_starfield.update(self)
         elif self.game_state == GameState.STARTMENU or self.game_state == GameState.HYPERSPACE:
             self.hyperspace_starfield.update(self)
-
+        elif self.game_state == GameState.HYPERSPACE and (pygame.time.get_ticks() - self.last_hyperspace_travel_time > self.hyperspace_travel_duration):
+            print("Exiting hyperspace")
+            exit_from_hyperspace(self)
+            
 
     def render(self):
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
         elif self.game_state == GameState.STARTMENU: render_start_menu(self)
+        elif self.game_state == GameState.HYPERSPACE: render_hyperspace(self)
         elif self.game_state == GameState.PAUSE:
             pass
 

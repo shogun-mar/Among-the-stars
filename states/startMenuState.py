@@ -21,6 +21,7 @@ def handle_start_menu_events_mouse(game, button, mouse_pos):
     if play_text_rect.collidepoint(mouse_pos) and button == 1: #Left mouse button
         game.game_state = GameState.GAMEPLAY
         game.alpha_surface.set_alpha(GAMEPLAY_ALPHA_VALUE)
+        game.last_hyperspace_travel_time = pygame.time.get_ticks() #Make it so the cooldown bar properly starts when the game is started
     elif help_text_rect.collidepoint(mouse_pos) and button == 1:
         game.game_state = GameState.HELPMENU
 

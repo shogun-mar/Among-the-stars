@@ -22,7 +22,6 @@ class Starfield:
         [enemy.update() for enemy in self.enemies] #Update all before drawing to have consistent movement
 
     def draw(self):
-        print("a")
         self.surf_to_draw.sort(key=lambda surf: surf.pos3d.z, reverse = True) #Painter's algorithm
         [surf.draw() for surf in self.surf_to_draw] #Draw the now sorted surfaces
         
