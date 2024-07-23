@@ -1,6 +1,6 @@
 import pygame
 import random, math
-from settings import SCREEN_HEIGHT , SCREEN_WIDTH, Z_DISTANCE, CENTER, ROTATION_VELOCITY, SCALE_POS
+from settings import SCREEN_HEIGHT , Z_DISTANCE, CENTER, ROTATION_VELOCITY, SCALE_POS, MAX_NUM_PROJECTILES_SCREEN
 from logic.projectile import Projectile
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
@@ -30,20 +30,21 @@ class Enemy:
         self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / self.pos3d.z + CENTER + self.mouse_offset
         self.size = (Z_DISTANCE - self.pos3d.z) / (0.2 * self.pos3d.z)
 
-        if random.randint(1, 4) == 1 and self.is_sprite_in_frame(): # Random chance to shoot at the player
-            self.shoot_at_player()
-
         if pygame.mouse.get_pressed()[2]: # If right mouse button is pressed
             # Rotate
             self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY)
             # Mouse control
             self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
 
+        if (random.random() < 0.01) and self.can_shoot(): # Random chance to shoot at the player
+            self.shoot_at_player()
+
     def draw(self):
         self.screen.blit(self.sprite, self.rect)
 
-    def is_sprite_in_frame(self):
-        return self.rect.colliderect(self.screen_rect)
+    def can_shoot(self):
+        #Checks in order if the entity is withing the frame, if the number of projectiles is lower than the maximum and if the entity is not at the bottom of the screen
+        return self.rect.colliderect(self.screen_rect) and (len(self.game.game_starfield.projectiles) < MAX_NUM_PROJECTILES_SCREEN) and (self.rect.midbottom[1] < SCREEN_HEIGHT - 20)
 
     def shoot_at_player(self):
         # Create a projectile aimed at the player's position

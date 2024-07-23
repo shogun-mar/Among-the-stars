@@ -101,8 +101,8 @@ class Game:
         if self.game_state == GameState.GAMEPLAY:
             self.game_starfield.update(self)
             
-            if self.life_points == 0:
-                self.quit_game()
+            #if self.life_points == 0: self.quit_game()
+
         elif self.game_state == GameState.STARTMENU:
             self.hyperspace_starfield.update(self)
         elif self.game_state == GameState.HYPERSPACE:

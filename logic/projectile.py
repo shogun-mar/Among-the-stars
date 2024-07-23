@@ -20,17 +20,16 @@ class Projectile:
         direction = self.target_pos - pygame.math.Vector2(self.rect.center)
         distance = direction.length()  # Calculate the distance to the target
 
-        if distance <= self.vel:
-            # If close enough, place the projectile directly at the target position
+        if distance <= self.vel: # If close enough, place the projectile directly at the target position
             self.rect.center = self.target_pos
-            # Removing the projectile, subtracting life points
-            self.original_entity.game.life_points -= 1
-            self.original_entity.game.game_starfield.objects_to_remove.append(self)
-            
-        else:
-            # Normalize the direction vector and move the projectile towards the target
+        else: # Normalize the direction vector and move the projectile towards the target
             direction.normalize_ip() #Adjust the direction vector to have a length of 1 withouth changing the direction
             self.rect.center += direction * self.vel
+
+        if self.rect.center == self.target_pos:
+             # Removing the projectile, subtracting life points
+            self.original_entity.game.life_points -= 1
+            self.original_entity.game.game_starfield.objects_to_remove.append(self)
 
     def draw(self):
         self.original_entity.screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile

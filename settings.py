@@ -7,13 +7,14 @@ MAX_FPS = 60 #60
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 CENTER = vec2(SCREEN_WIDTH // 2,  SCREEN_HEIGHT // 2)
+MAX_NUM_PROJECTILES_SCREEN = 10
 PROJECTILE_VELOCITY = 5
 SCALE_POS = 35
 MAX_NUM_ENEMIES_SCREEN = 4
 MAX_NUM_POWERUPS_SCREEN = 3
 ENEMY_RESPAWN_COOLDOWN = 3 #Expressed in seconds
 POWERUP_RESPAWN_COOLDOWN = 10 #Expressed in seconds
-ATTACK_COOLDOWN = 5000 #Expressed in milliseconds
+ATTACK_COOLDOWN = 5#5000 #Expressed in milliseconds
 
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f
