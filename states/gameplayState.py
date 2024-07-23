@@ -4,9 +4,10 @@ from states.gameState import GameState
 from settings import *
 from logic.powerup import PowerUp
 from logic.enemy import Enemy
+from logic.projectile import Projectile
 
 heart_sprite = pygame.image.load("graphics/heart_icon.png")
-heart_rects = [heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - i * 30, 70)) for i in range(3)]
+heart_rects = [heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - i * 30 + 20, 70)) for i in range(MAX_PLAYER_LIFE_POINTS)]
 
 circle_progress = 0 # Progress of the attack cooldown circle
 
@@ -32,7 +33,7 @@ def render_gameplay(game):
     game.game_starfield.draw()
     render_hyperspace_cooldown_bar(game)
     game.fake_screen.blit(game.rendered_score, game.rendered_score_rect)
-    for i in range(game.life_points): game.fake_screen.blit(heart_sprite, heart_rects[i])
+    for i in range(game.current_life_points): game.fake_screen.blit(heart_sprite, heart_rects[i])
     if circle_progress != 1:draw_attack_cooldown_circle(game) # Draw attack cooldown circle if not fully charged
     
 def check_collisions(game, mouse_pos):
@@ -49,6 +50,8 @@ def check_collisions(game, mouse_pos):
                 elements_to_check.sort(key=lambda element: element.pos3d.z, reverse=True)  # Sort the list by z distance in descending order
                 for element in elements_to_check:  # Iterate over the combined list
                     if element.rect.collidepoint(mouse_pos):  # Check for collision with the mouse position
+                        if isinstance(element, PowerUp): activate_powerup(game, element)  # Activate the powerup if it is a powerup
+                        shoot_at_target(game, element.screen_pos)  # Shoot at the target
                         game.game_starfield.objects_to_remove.append(element)  # Add the element to the list of objects to remove
                         return  # Exit the method after finding and removing the element
                         
@@ -58,14 +61,17 @@ def is_mouse_over_star(game, mouse_pos):
                 return True
         return False
 
-def activate_powerup(powerup):
-    if powerup.type == 'life':
-        print("Life powerup activated")
+def activate_powerup(game, powerup):
+    if powerup.type == 'life' and game.current_life_points < PLAYER_LIFE_POINTS:
+        game.current_life_points += 1
     elif powerup.type == 'cooldown':
         print("Cooldown powerup activated")
     elif powerup.type == 'score':
-        print("Score powerup activated")
-        #game.update_score(5)
+        game.update_score(2)
+
+def shoot_at_target(game, target):
+    projectile = Projectile(origin_pos=pygame.math.Vector2((SCREEN_WIDTH // 2, SCREEN_HEIGHT)), target_pos=target, game=game) # Create a projectile aimed at the player's position
+    game.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
 def render_hyperspace_cooldown_bar(game):
     cooldown_percentage = (pygame.time.get_ticks() - game.last_hyperspace_travel_time) / game.hyperspace_travel_maximum_duration

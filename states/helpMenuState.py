@@ -8,11 +8,12 @@ font = pygame.font.Font("graphics/Sterion-BLLld.ttf", 20)
 
 help_text = (
     "Your objective is to survive as long as possible.\n"
-    "You can shoot with the left mouse button.\n"
-    "You can rotate your spaceship with the right mouse button.\n"
-    "You can use the hyperspace ability with the E key which enables you to temporarly escape danger.\n"
-    "Shoot at red rocks to gain points, green ones to gain health and white ones to gain hyperspace energy.\n"
-    "Pause the game with the P key, toggle fullscreen with the F key and press ESCAPE to close the game.\n"
+    "Shoot using the left mouse button.\n"
+    "Rotate your spaceship with the right mouse button.\n"
+    "Escape danger using hyperspace with the E key.\n"
+    "Shoot at red rocks to gain points, green ones to gain health \n"
+    "and increase max life points if at the max and white ones to gain hyperspace energy.\n"
+    "Pause with P, toggle fullscreen with F, and exit with ESCAPE.\n"
     "Good luck!"
 )
 
@@ -30,6 +31,7 @@ def handle_help_menu_events(game, key):
 def handle_help_menu_events_mouse(game, button, mouse_pos):
     if button == 1 and play_text_rect.collidepoint(mouse_pos): # Check if the left mouse button is pressed and the mouse is over the play button
         game.game_state = GameState.GAMEPLAY
+        game.alpha_surface.set_alpha(GAMEPLAY_ALPHA_VALUE)
 
 def render_help_menu(game):
     game.fake_screen.fill((0, 0, 0))

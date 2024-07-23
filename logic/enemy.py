@@ -1,6 +1,6 @@
 import pygame
 import random, math
-from settings import SCREEN_HEIGHT , Z_DISTANCE, CENTER, ROTATION_VELOCITY, SCALE_POS, MAX_NUM_PROJECTILES_SCREEN, SCALE_MULTIPLIER_LINEAR_FACTOR
+from settings import SCREEN_HEIGHT, SCREEN_WIDTH, Z_DISTANCE, CENTER, ROTATION_VELOCITY, SCALE_POS, MAX_NUM_PROJECTILES_SCREEN, SCALE_MULTIPLIER_LINEAR_FACTOR
 from logic.projectile import Projectile
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
@@ -59,7 +59,7 @@ class Enemy:
         return self.rect.colliderect(self.screen_rect) and (len(self.game.game_starfield.projectiles) < MAX_NUM_PROJECTILES_SCREEN-1) and (self.rect.midbottom[1] < SCREEN_HEIGHT - 20)
 
     def shoot_at_player(self):
-        projectile = Projectile(self.rect.midbottom, self) # Create a projectile aimed at the player's position
+        projectile = Projectile(original_entity=self, origin_pos=self.rect.midbottom, target_pos=pygame.math.Vector2((SCREEN_WIDTH // 2, SCREEN_HEIGHT)), game=self.game) # Create a projectile aimed at the player's position
         self.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
     def is_on_screen(self):

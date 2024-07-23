@@ -16,6 +16,8 @@ MAX_NUM_POWERUPS_SCREEN = 3
 ENEMY_RESPAWN_COOLDOWN = 3 #Expressed in seconds
 POWERUP_RESPAWN_COOLDOWN = 10 #Expressed in seconds
 ATTACK_COOLDOWN = 3500 #5000 #Expressed in milliseconds
+PLAYER_LIFE_POINTS = 5
+MAX_PLAYER_LIFE_POINTS = 8
 
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f
@@ -28,7 +30,7 @@ ROTATION_VELOCITY = 0.1
 #For game_starfield
 NUM_STARS = 200
 Z_DISTANCE = 40 #40
-GAMEPLAY_ALPHA_VALUE = 128
+GAMEPLAY_ALPHA_VALUE = 64
 
 #For demo game_starfield
 DEMO_COLORS = 'mediumpurple3 indigo crimson seagreen1 salmon1 purple2 plum3 palevioletred violetred springgreen4 steelblue4 steelblue slateblue4 slateblue sienna2 blue cyan skyblue purple magenta red green blue yellow cyan magenta white'.split()

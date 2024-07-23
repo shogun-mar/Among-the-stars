@@ -1,9 +1,8 @@
 import pygame
 from os import environ
-from random import randint
 from sys import exit
 from ctypes import windll
-from settings import *
+from settings import HYPERSPACE_ALPHA_VALUE, RESOLUTION, FLAGS, MAX_FPS, SCREEN_WIDTH, SCREEN_HEIGHT, ATTACK_COOLDOWN, PLAYER_LIFE_POINTS, FULLSCREEN_KEY
 from states.gameState import GameState
 from states.gameplayState import *
 from states.startMenuState import *
@@ -32,7 +31,7 @@ class Game:
         self.game_state = GameState.STARTMENU
         self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
 
-        self.score_font = pygame.font.Font("graphics/score_font.ttf", 36)
+        self.score_font = pygame.font.Font("graphics/SterionItalic-R99PA.ttf", 36)
         self.score: int = 0
         self.rendered_score = self.score_font.render(f"Score: {self.score}", True, (255, 255, 255))
         self.rendered_score_rect = self.rendered_score.get_rect(center = (SCREEN_WIDTH // 2, 50))
@@ -45,7 +44,8 @@ class Game:
         self.last_hyperspace_travel_time: int = 0 #Time of the last hyperspace travel
         self.last_exit_from_hyperspace_time: int = 0 #Time of the last exit from hyperspace
 
-        self.life_points: int = 3
+        self.current_life_points: int = PLAYER_LIFE_POINTS
+        self.max_life_points: int = PLAYER_LIFE_POINTS
 
         #Help menu stuff
         self.decoration_sprite = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("graphics/spaceship_enemy.png").convert_alpha(), 90), (250, 250))

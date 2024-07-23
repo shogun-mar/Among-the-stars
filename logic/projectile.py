@@ -2,16 +2,16 @@ import pygame, random, math
 from settings import PROJECTILE_VELOCITY, vec2, SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Projectile:
-    def __init__(self, pos, original_entity):
-        self.original_entity = original_entity # The entity that shot the projectile
+    def __init__(self, original_entity, origin_pos, target_pos, game):
+        self.game = game
+        self.original_entity = original_entity
         self.sprite = pygame.image.load('graphics/projectile.png')
-        self.rect = self.sprite.get_rect(midtop = pos)
-        self.pos3d = self.get_pos3d()
-        self.target_pos = pygame.math.Vector2((SCREEN_WIDTH // 2, SCREEN_HEIGHT))
+        self.rect = self.sprite.get_rect(midtop = origin_pos)
+        #self.pos3d = self.get_pos3d()
+        self.target_pos = target_pos
         self.screen_pos = vec2(0, 0)
         self.vel = PROJECTILE_VELOCITY  # Projectile velocity
         
-
     def get_pos3d(self):
         return self.original_entity.pos3d
     
@@ -28,8 +28,8 @@ class Projectile:
 
         if self.rect.center == self.target_pos:
              # Removing the projectile, subtracting life points
-            self.original_entity.game.life_points -= 1
-            self.original_entity.game.game_starfield.objects_to_remove.append(self)
+            self.game.current_life_points -= 1
+            self.game.game_starfield.objects_to_remove.append(self)
 
     def draw(self):
         self.original_entity.screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile
