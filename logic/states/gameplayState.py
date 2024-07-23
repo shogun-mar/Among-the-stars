@@ -6,9 +6,6 @@ from logic.powerup import PowerUp
 from logic.enemy import Enemy
 from logic.projectile import Projectile
 
-heart_sprite = pygame.image.load("graphics/heart_icon.png")
-heart_rects = [heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - i * 30 + 20, 70)) for i in range(MAX_PLAYER_LIFE_POINTS)]
-
 attack_circle_progress = 0 # Progress of the attack cooldown circle
 shield_circle_progress = 0 # Progress of the shield cooldown circle
 
@@ -32,9 +29,10 @@ def handle_gameplay_events_mouse(game, button, mouse_pos):
 def render_gameplay(game):
     game.fake_screen.blit(game.alpha_surface, (0,0)) 
     game.game_starfield.draw()
-    render_hyperspace_cooldown_bar(game)
+    game.fake_screen.blit(game.player.sprite, game.player.rect)
     game.fake_screen.blit(game.rendered_score, game.rendered_score_rect)
-    for i in range(game.current_life_points): game.fake_screen.blit(heart_sprite, heart_rects[i])
+    for i in range(game.current_life_points): game.fake_screen.blit(game.heart_sprite, game.heart_rects[i])
+    render_hyperspace_cooldown_bar(game) # Draw hyperspace cooldown bar
     if attack_circle_progress != 1: render_attack_cooldown_circle(game) # Draw attack cooldown circle if not fully charged
     if shield_circle_progress != 1: render_shield_cooldown_circle(game) # Draw shield cooldown circle if not fully charged
     
