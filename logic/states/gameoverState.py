@@ -24,7 +24,7 @@ def handle_gameover_events_mouse(game, button, mouse_pos):
         game.last_attack_time = pygame.time.get_ticks()
 
 def render_gameover_menu(game):
-    game.fake_screen.fill((0, 0, 0))
+    game.fake_screen.blit(game.alpha_surface, (0, 0))
     game.hyperspace_starfield.draw()
     game.fake_screen.blit(game_over_text,  game_over_text_rect)
     game.fake_screen.blit(play_text, play_text_rect)
