@@ -6,15 +6,17 @@ from logic.projectile import Projectile
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
 
 class Enemy:
-    def __init__(self, game):
+    def __init__(self, game, player_reference):
+        self.game = game
+        self.player = player_reference
         self.screen = game.fake_screen
         self.screen_rect = self.screen.get_rect()
-        self.game = game
         self.pos3d = self.get_pos3d()
         self.scale_multiplier: float = 1
         self.vel = random.uniform(0.05, 0.25)
         self.sprite = pygame.image.load('graphics/spaceship_enemy.png').convert_alpha()
         self.rect = self.sprite.get_rect(topleft = (0, 0))
+        self.shooting_points_coords = self.rect.midbottom
         self.sprite_width, self.sprite_height = self.sprite.get_size()
         self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
 
@@ -49,7 +51,7 @@ class Enemy:
             self.rect.size = self.sprite.get_size()
             self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / max(self.pos3d.z, 1) + CENTER + self.mouse_offset
 
-        if (random.random() < 0.01) and self.can_shoot(): self.shoot_at_player() # Random chance to shoot at the player
+        if (random.random() <= 0.1) and self.can_shoot(): self.shoot_at_player() # Random chance to shoot at the player
 
     def draw(self):
         self.screen.blit(self.sprite, self.rect)
@@ -59,13 +61,16 @@ class Enemy:
         return self.rect.colliderect(self.screen_rect) and (len(self.game.game_starfield.projectiles) < MAX_NUM_PROJECTILES_SCREEN-1) and (self.rect.midbottom[1] < SCREEN_HEIGHT - 20)
 
     def shoot_at_player(self):
-        projectile = Projectile(original_entity=self, origin_pos=self.rect.midbottom, target_pos=pygame.math.Vector2((SCREEN_WIDTH // 2, SCREEN_HEIGHT)), game=self.game) # Create a projectile aimed at the player's position
+        projectile = Projectile(original_entity=self, target=self.player, game=self.game) # Create a projectile aimed at the player's position
         self.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
     def is_on_screen(self):
         return False
         return self.rect.colliderect(self.screen_rect)
     
+    def __str__(self):
+        return f"Enemy midbottom at {self.rect.midbottom}"
+
     def can_be_resized(self):
         return pygame.time.get_ticks() - self.last_resize_cooldown_time > self.resize_cooldown_duration
 

@@ -23,9 +23,10 @@ class Game:
         self.clock = pygame.time.Clock()
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE]) # Allow only specific events (for performance reasons)
 
-        #Starfield objects
+        #Objects
         self.game_starfield = None
         self.hyperspace_starfield = None
+        self.player = None
         
         #Game variables
         self.game_state = GameState.STARTMENU
@@ -112,6 +113,11 @@ class Game:
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
+
+            print("len: ", len(self.game_starfield.projectiles), "list: ", end=" ")
+            for projectile in self.game_starfield.projectiles:
+                print(projectile, end="\n")
+
             self.game_starfield.update(self)
             
             #if self.life_points == 0: self.quit_game()
@@ -159,6 +165,9 @@ class Game:
 
     def set_hyperspace_starfield(self, hyperspace_starfield): #Not necessary if all classes were written in the same file but to better organize the code I separated each class into its own file
         self.hyperspace_starfield = hyperspace_starfield
+
+    def set_player(self, player):
+        self.player = player
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

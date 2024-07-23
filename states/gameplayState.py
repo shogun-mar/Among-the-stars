@@ -51,7 +51,8 @@ def check_collisions(game, mouse_pos):
                 for element in elements_to_check:  # Iterate over the combined list
                     if element.rect.collidepoint(mouse_pos):  # Check for collision with the mouse position
                         if isinstance(element, PowerUp): activate_powerup(game, element)  # Activate the powerup if it is a powerup
-                        shoot_at_target(game, element.screen_pos)  # Shoot at the target
+                        if isinstance(element, Enemy): game.update_score(1)
+                        shoot_at_target(game, element)  # Shoot at the element
                         game.game_starfield.objects_to_remove.append(element)  # Add the element to the list of objects to remove
                         return  # Exit the method after finding and removing the element
                         
@@ -70,8 +71,8 @@ def activate_powerup(game, powerup):
         game.update_score(2)
 
 def shoot_at_target(game, target):
-    projectile = Projectile(origin_pos=pygame.math.Vector2((SCREEN_WIDTH // 2, SCREEN_HEIGHT)), target_pos=target, game=game) # Create a projectile aimed at the player's position
-    game.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
+    projectile = Projectile(original_entity=game.player, target=target, game=game) # Create a projectile aimed at the player's position
+    game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
 def render_hyperspace_cooldown_bar(game):
     cooldown_percentage = (pygame.time.get_ticks() - game.last_hyperspace_travel_time) / game.hyperspace_travel_maximum_duration

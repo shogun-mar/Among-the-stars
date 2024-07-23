@@ -1,20 +1,16 @@
-import pygame, random, math
+import pygame
 from settings import PROJECTILE_VELOCITY, vec2, SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Projectile:
-    def __init__(self, original_entity, origin_pos, target_pos, game):
+    def __init__(self, original_entity, target, game):
         self.game = game
         self.original_entity = original_entity
         self.sprite = pygame.image.load('graphics/projectile.png')
-        self.rect = self.sprite.get_rect(midtop = origin_pos)
-        #self.pos3d = self.get_pos3d()
-        self.target_pos = target_pos
-        self.screen_pos = vec2(0, 0)
+        self.rect = self.sprite.get_rect(midtop = self.original_entity.shooting_points_coords)
+        self.target_pos = target.pos3d.xy
+        self.pos3d = self.original_entity.pos3d
         self.vel = PROJECTILE_VELOCITY  # Projectile velocity
-        
-    def get_pos3d(self):
-        return self.original_entity.pos3d
-    
+
     def update(self):
         # Calculate direction vector (from projectile to target)
         direction = self.target_pos - pygame.math.Vector2(self.rect.center)
@@ -31,5 +27,8 @@ class Projectile:
             self.game.current_life_points -= 1
             self.game.game_starfield.objects_to_remove.append(self)
 
+    def __str__(self):
+        return f"Projectile from {self.original_entity} to target at {self.target_pos}"
+
     def draw(self):
-        self.original_entity.screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile
+        self.game.fake_screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile

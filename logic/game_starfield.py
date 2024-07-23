@@ -26,7 +26,7 @@ class Starfield:
         if len(self.enemies) < MAX_NUM_ENEMIES_SCREEN: #Checks if the number of enemies on screen is lower than the maximum
             if current_time - self.last_enemy_respawn_time > ENEMY_RESPAWN_COOLDOWN: #Spawns the enemy only if the cooldown has passed
                 self.last_enemy_respawn_time = current_time
-                self.enemies.append(Enemy(game))
+                self.enemies.append(Enemy(game, game.player))
         if len(self.powerups) < MAX_NUM_POWERUPS_SCREEN:
             if current_time - self.last_powerup_respawn_time > POWERUP_RESPAWN_COOLDOWN:
                 self.last_powerup_respawn_time = current_time
