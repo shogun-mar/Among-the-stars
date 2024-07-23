@@ -3,11 +3,12 @@ from os import environ
 from sys import exit
 from ctypes import windll
 from settings import HYPERSPACE_ALPHA_VALUE, RESOLUTION, FLAGS, MAX_FPS, SCREEN_WIDTH, SCREEN_HEIGHT, ATTACK_COOLDOWN, PLAYER_LIFE_POINTS, FULLSCREEN_KEY
-from states.gameState import GameState
-from states.gameplayState import *
-from states.startMenuState import *
-from states.hyperspaceState import *
-from states.helpMenuState import *
+from logic.states.gameState import GameState
+from logic.states.gameplayState import *
+from logic.states.startMenuState import *
+from logic.states.hyperspaceState import *
+from logic.states.helpMenuState import *
+from logic.states.gameoverState import *
 
 class Game:
     def __init__(self):
@@ -109,15 +110,19 @@ class Game:
                     if self.game_state == GameState.GAMEPLAY: handle_gameplay_events_mouse(self, event.button, pygame.mouse.get_pos())
                     elif self.game_state == GameState.STARTMENU: handle_start_menu_events_mouse(self, event.button, pygame.mouse.get_pos())           
                     elif self.game_state == GameState.HELPMENU: handle_help_menu_events_mouse(self, event.button, pygame.mouse.get_pos())
+                    elif self.game_state == GameState.GAMEOVER: handle_gameover_events_mouse(self, event.button, pygame.mouse.get_pos())
 
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
             self.game_starfield.update(self)
-            
-            #if self.life_points == 0: self.quit_game()
-        elif self.game_state == GameState.STARTMENU:
+            if self.current_life_points == 0: 
+                self.alpha_surface.set_alpha(HYPERSPACE_ALPHA_VALUE)
+                self.game_state = GameState.GAMEOVER
+                
+        elif self.game_state == GameState.STARTMENU or self.game_state == GameState.GAMEOVER:
             self.hyperspace_starfield.update(self)
+
         elif self.game_state == GameState.HYPERSPACE:
             self.hyperspace_starfield.update(self)
             current_time = pygame.time.get_ticks()
@@ -131,13 +136,12 @@ class Game:
                 self.decoration_projectile_rect.midleft = self.decoration_sprite_rect.midright[0] + 7, self.decoration_sprite_rect.midright[1]
             self.decoration_projectile_rect.midleft = self.decoration_projectile_rect.midleft[0] + 7, self.decoration_projectile_rect.midleft[1] 
 
-
-
     def render(self):
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
         elif self.game_state == GameState.STARTMENU: render_start_menu(self)
         elif self.game_state == GameState.HYPERSPACE: render_hyperspace(self)
         elif self.game_state == GameState.HELPMENU: render_help_menu(self)
+        elif self.game_state == GameState.GAMEOVER: render_gameover_menu(self)
         elif self.game_state == GameState.PAUSE:
             pass
 

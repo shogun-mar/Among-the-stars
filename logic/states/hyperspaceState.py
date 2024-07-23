@@ -1,4 +1,4 @@
-from states.gameState import GameState
+from logic.states.gameState import GameState
 from settings import *
 
 def handle_hyperspace_events(game, key):

@@ -1,6 +1,6 @@
 import pygame
 from math import pi
-from states.gameState import GameState
+from logic.states.gameState import GameState
 from settings import *
 from logic.powerup import PowerUp
 from logic.enemy import Enemy

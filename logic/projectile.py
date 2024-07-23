@@ -1,5 +1,5 @@
 import pygame
-from settings import PROJECTILE_VELOCITY, vec2, SCREEN_HEIGHT, SCREEN_WIDTH
+from settings import PROJECTILE_VELOCITY, vec2, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Projectile:
     def __init__(self, original_entity, target, game):
@@ -32,5 +32,4 @@ class Projectile:
         self.game.fake_screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile
 
     def get_angle(self):
-        return vec2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2).angle_to(vec2(self.target_pos)) * (-1)
-        #return vec2(self.target_pos).angle_to(vec2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)) * (-1)
+        return vec2(self.original_entity.shooting_points_coords).angle_to(vec2(self.target_pos)) * -1
