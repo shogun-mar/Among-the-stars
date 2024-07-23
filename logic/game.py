@@ -113,15 +113,9 @@ class Game:
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
         if self.game_state == GameState.GAMEPLAY:
-
-            print("len: ", len(self.game_starfield.projectiles), "list: ", end=" ")
-            for projectile in self.game_starfield.projectiles:
-                print(projectile, end="\n")
-
             self.game_starfield.update(self)
             
             #if self.life_points == 0: self.quit_game()
-
         elif self.game_state == GameState.STARTMENU:
             self.hyperspace_starfield.update(self)
         elif self.game_state == GameState.HYPERSPACE:

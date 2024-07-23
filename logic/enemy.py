@@ -16,12 +16,19 @@ class Enemy:
         self.vel = random.uniform(0.05, 0.25)
         self.sprite = pygame.image.load('graphics/spaceship_enemy.png').convert_alpha()
         self.rect = self.sprite.get_rect(topleft = (0, 0))
-        self.shooting_points_coords = self.rect.midbottom
         self.sprite_width, self.sprite_height = self.sprite.get_size()
         self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
 
         self.resize_cooldown_duration = 3000 #Expressed in seconds
         self.last_resize_cooldown_time = 0 
+
+    @property
+    def screen_pos(self): #Used to get the screen position of the entity
+        return self.rect.center
+
+    @property
+    def shooting_points_coords(self):
+        return self.rect.midbottom
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
@@ -67,9 +74,6 @@ class Enemy:
     def is_on_screen(self):
         return False
         return self.rect.colliderect(self.screen_rect)
-    
-    def __str__(self):
-        return f"Enemy midbottom at {self.rect.midbottom}"
 
     def can_be_resized(self):
         return pygame.time.get_ticks() - self.last_resize_cooldown_time > self.resize_cooldown_duration

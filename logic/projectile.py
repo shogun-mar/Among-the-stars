@@ -5,11 +5,12 @@ class Projectile:
     def __init__(self, original_entity, target, game):
         self.game = game
         self.original_entity = original_entity
-        self.sprite = pygame.image.load('graphics/projectile.png')
-        self.rect = self.sprite.get_rect(midtop = self.original_entity.shooting_points_coords)
-        self.target_pos = target.pos3d.xy
+        self.target_pos = target.screen_pos
         self.pos3d = self.original_entity.pos3d
         self.vel = PROJECTILE_VELOCITY  # Projectile velocity
+        self.sprite = pygame.image.load('graphics/projectile.png').convert_alpha()
+        self.rect = self.sprite.get_rect(midtop = self.original_entity.shooting_points_coords)
+        self.sprite = pygame.transform.rotate(self.sprite, self.get_angle()) #Rotate the projectile sprite to face the target
 
     def update(self):
         # Calculate direction vector (from projectile to target)
@@ -27,8 +28,9 @@ class Projectile:
             self.game.current_life_points -= 1
             self.game.game_starfield.objects_to_remove.append(self)
 
-    def __str__(self):
-        return f"Projectile from {self.original_entity} to target at {self.target_pos}"
-
     def draw(self):
         self.game.fake_screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile
+
+    def get_angle(self):
+        return vec2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2).angle_to(vec2(self.target_pos)) * (-1)
+        #return vec2(self.target_pos).angle_to(vec2(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)) * (-1)

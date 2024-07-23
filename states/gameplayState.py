@@ -72,6 +72,7 @@ def activate_powerup(game, powerup):
 
 def shoot_at_target(game, target):
     projectile = Projectile(original_entity=game.player, target=target, game=game) # Create a projectile aimed at the player's position
+    print(f"Shooting at target coords {target.screen_pos}")
     game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
 def render_hyperspace_cooldown_bar(game):
