@@ -47,6 +47,13 @@ class Game:
 
         self.life_points: int = 3
 
+        #Help menu stuff
+        self.decoration_sprite = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("graphics/spaceship_enemy.png").convert_alpha(), 90), (250, 250))
+        self.decoration_sprite_rect = self.decoration_sprite.get_rect(topleft = (30, 30))
+
+        self.decoration_projectile = pygame.transform.rotate(pygame.image.load("graphics/projectile.png").convert_alpha(), 90)
+        self.decoration_projectile_rect = self.decoration_projectile.get_rect(midleft = (self.decoration_sprite_rect.midright[0] + 10, self.decoration_sprite_rect.midright[1]))
+
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
 
@@ -111,7 +118,15 @@ class Game:
             if current_time - self.last_hyperspace_travel_time > self.hyperspace_travel_duration:
                 self.last_exit_from_hyperspace_time = current_time
                 exit_from_hyperspace(self)
-            
+        elif self.game_state == GameState.HELPMENU:
+            self.decoration_sprite_rect.midright = self.decoration_sprite_rect.midright[0] + 5, self.decoration_sprite_rect.midright[1]
+            if self.decoration_sprite_rect.midright[0] > SCREEN_WIDTH - 25: self.decoration_sprite_rect.midleft = 25, self.decoration_sprite_rect.midright[1]
+
+            self.decoration_projectile_rect.midleft = self.decoration_sprite_rect.midright[0] + 10, self.decoration_sprite_rect.midright[1]
+            if self.decoration_projectile_rect.midleft[0] > SCREEN_WIDTH - 25: self.decoration_projectile_rect.midleft = 25, self.decoration_projectile_rect.midright[1]
+
+
+
     def render(self):
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
         elif self.game_state == GameState.STARTMENU: render_start_menu(self)

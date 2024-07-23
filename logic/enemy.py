@@ -13,10 +13,13 @@ class Enemy:
         self.pos3d = self.get_pos3d()
         self.scale_multiplier: float = 1
         self.vel = random.uniform(0.05, 0.25)
-        self.sprite = pygame.image.load('graphics/spaceship_enemy.png')
+        self.sprite = pygame.image.load('graphics/spaceship_enemy.png').convert_alpha()
         self.rect = self.sprite.get_rect(topleft = (0, 0))
         self.sprite_width, self.sprite_height = self.sprite.get_size()
         self.mouse_offset = vec2(0, 0)  # New variable to track mouse offset
+
+        self.resize_cooldown_duration = 3000 #Expressed in seconds
+        self.last_resize_cooldown_time = 0 
 
     def get_pos3d(self):
         angle = random.uniform (0, 2 * math.pi)
@@ -34,11 +37,9 @@ class Enemy:
             self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY) # Rotate
             self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
 
-        if self.is_on_screen():
+        if self.is_on_screen() and self.can_be_resized(): #Temporarly disabled
             self.scale_multiplier = round(1 + SCALE_MULTIPLIER_LINEAR_FACTOR * (Z_DISTANCE - self.pos3d.z), 2)
-            # self.scale_multiplier = round(base_scale_value + linear_increase_factor * (Z_DISTANCE - self.pos3d.z))
-
-            # Debugging print statement to observe the scale_multiplier calculation
+            self.scale_multiplier = min(self.scale_multiplier, 2) # Limit the scale multiplier to 2
             print("Scale Multiplier = ", self.scale_multiplier, "Z Distance = ", self.pos3d.z)
             # Update the sprite size based on the scale multiplier
             scaled_width = int(self.sprite_width * self.scale_multiplier)
@@ -62,5 +63,9 @@ class Enemy:
         self.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
     def is_on_screen(self):
-        return True
+        return False
         return self.rect.colliderect(self.screen_rect)
+    
+    def can_be_resized(self):
+        return pygame.time.get_ticks() - self.last_resize_cooldown_time > self.resize_cooldown_duration
+

@@ -8,7 +8,7 @@ class Star:
         self.screen = game.fake_screen
         self.pos3d = self.get_pos3d()
         self.vel = random.uniform(0.05, 0.25)
-        self.sprite = pygame.image.load("graphics/star.png")
+        self.sprite = pygame.image.load("graphics/star.png").convert_alpha()
         self.current_rotation_angle = random.randint(0, 360)
         self.sprite = pygame.transform.rotate(self.sprite, self.current_rotation_angle) # Random rotation
         self.screen_pos = vec2(0, 0)
