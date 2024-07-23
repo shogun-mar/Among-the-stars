@@ -24,6 +24,7 @@ ENEMY_ATTACK_COOLDOWN = 2000 #Expressed in milliseconds
 FULLSCREEN_KEY = pygame.K_f
 HYPERSPACE_KEY = pygame.K_e
 PAUSE_KEY = pygame.K_p
+SHIELD_KEY = pygame.K_q
 
 #Game variables
 ROTATION_VELOCITY = 0.1

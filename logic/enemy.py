@@ -82,7 +82,7 @@ class Enemy:
         and has_cooldown_expired
 
     def shoot_at_player(self):
-        projectile = Projectile(original_entity=self, target=self.player, game=self.game) # Create a projectile aimed at the player's position
+        projectile = Projectile(original_entity=self, target_pos=self.player.rect.midtop, is_enemy=True, game=self.game) # Create a projectile aimed at the player's position
         self.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
     def is_on_screen(self):

@@ -12,6 +12,10 @@ shield_circle_progress = 0 # Progress of the shield cooldown circle
 def handle_gameplay_events(game, key):
     if key == PAUSE_KEY:
         game.game_state = GameState.PAUSE
+    elif key == SHIELD_KEY and shield_circle_progress == 1:
+        if game.is_shield_active == False: game.shield_active = True
+        #global shield_circle_progress
+        #shield_circle_progress = 0
     elif key == HYPERSPACE_KEY:
         current_time = pygame.time.get_ticks()
         temp_hyperspace_travel_time = current_time - game.last_hyperspace_travel_time
@@ -30,6 +34,7 @@ def render_gameplay(game):
     game.fake_screen.blit(game.alpha_surface, (0,0)) 
     game.game_starfield.draw()
     game.fake_screen.blit(game.player.sprite, game.player.rect)
+    if game.is_shield_active: game.fake_screen.blit(game.shield_sprite, game.shield_rect)
     game.fake_screen.blit(game.rendered_score, game.rendered_score_rect)
     for i in range(game.current_life_points): game.fake_screen.blit(game.heart_sprite, game.heart_rects[i])
     render_hyperspace_cooldown_bar(game) # Draw hyperspace cooldown bar
@@ -52,7 +57,7 @@ def check_collisions(game, mouse_pos):
                     if element.rect.collidepoint(mouse_pos):  # Check for collision with the mouse position
                         if isinstance(element, PowerUp): activate_powerup(game, element)  # Activate the powerup if it is a powerup
                         if isinstance(element, Enemy): game.update_score(1)
-                        shoot_at_target(game, element)  # Shoot at the element
+                        shoot_at_target(game, element.rect.midbottom)  # Shoot at the element
                         game.game_starfield.objects_to_remove.append(element)  # Add the element to the list of objects to remove
                         return  # Exit the method after finding and removing the element
                         
@@ -70,9 +75,8 @@ def activate_powerup(game, powerup):
     elif powerup.type == 'score':
         game.update_score(2)
 
-def shoot_at_target(game, target):
-    projectile = Projectile(original_entity=game.player, target=target, game=game) # Create a projectile aimed at the player's position
-    print(f"Shooting at target coords {target.screen_pos}")
+def shoot_at_target(game, target_pos):
+    projectile = Projectile(original_entity=game.player, target_pos=target_pos, is_enemy=False, game=game) # Create a projectile aimed at the player's position
     game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
 def render_hyperspace_cooldown_bar(game):

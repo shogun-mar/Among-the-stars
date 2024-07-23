@@ -11,6 +11,8 @@ help_text = (
     "Shoot using the left mouse button.\n"
     "Rotate your spaceship with the right mouse button.\n"
     "Escape danger using hyperspace with the E key.\n"
+    "At the cost of one life point and by pressing Q you can activate a shield\n"
+    "which will reflected any projectiles coming your way.\n"
     "Shoot at red rocks to gain points, green ones to gain health \n"
     "and increase max life points if at the max and white ones to gain hyperspace energy.\n"
     "Pause with P, toggle fullscreen with F, and exit with ESCAPE.\n"

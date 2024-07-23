@@ -1,11 +1,12 @@
 import pygame
-from settings import PROJECTILE_VELOCITY, vec2, SCREEN_WIDTH, SCREEN_HEIGHT
+from settings import PROJECTILE_VELOCITY, vec2
 
 class Projectile:
-    def __init__(self, original_entity, target, game):
+    def __init__(self, original_entity, target_pos, is_enemy, game):
         self.game = game
         self.original_entity = original_entity
-        self.target_pos = target.screen_pos
+        self.is_enemy = is_enemy
+        self.target_pos = target_pos
         self.pos3d = self.original_entity.pos3d
         self.vel = PROJECTILE_VELOCITY  # Projectile velocity
         self.sprite = pygame.image.load('graphics/projectile.png').convert_alpha()
@@ -24,9 +25,14 @@ class Projectile:
             self.rect.center += direction * self.vel
 
         if self.rect.center == self.target_pos:
-             # Removing the projectile, subtracting life points
-            self.game.current_life_points -= 1
-            self.game.game_starfield.objects_to_remove.append(self)
+            if not self.is_enemy: self.game.game_starfield.objects_to_remove.append(self.original_entity)
+
+            if not self.game.is_shield_active: 
+                if self.is_enemy: self.game.current_life_points -= 1
+                self.game.game_starfield.objects_to_remove.append(self)
+            else:
+                self.rect.midbottom, self.target_pos = self.target_pos, self.rect.midbottom #Swap the projectile position with the target position to make the projectile go back to the player
+            
 
     def draw(self):
         self.game.fake_screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile

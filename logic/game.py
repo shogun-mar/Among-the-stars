@@ -49,9 +49,13 @@ class Game:
         self.current_life_points: int = PLAYER_LIFE_POINTS
         self.max_life_points: int = PLAYER_LIFE_POINTS
 
-        #Game menu
+        #Gameplay
         self.heart_sprite = pygame.image.load("graphics/heart_icon.png").convert_alpha()
         self.heart_rects = [self.heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - i * 30 + 20, 70)) for i in range(MAX_PLAYER_LIFE_POINTS)]
+
+        self.is_shield_active: bool = False
+        self.shield_sprite = pygame.image.load("graphics/shield_icon.png").convert_alpha()
+        self.shield_rect = self.shield_sprite.get_rect(midbottom = (SCREEN_WIDTH // 2, SCREEN_HEIGHT))
 
         #Help menu stuff
         self.decoration_sprite = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("graphics/spaceship_enemy.png").convert_alpha(), 90), (250, 250))
