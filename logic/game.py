@@ -52,7 +52,13 @@ class Game:
         self.decoration_sprite_rect = self.decoration_sprite.get_rect(topleft = (30, 30))
 
         self.decoration_projectile = pygame.transform.rotate(pygame.image.load("graphics/projectile.png").convert_alpha(), 90)
-        self.decoration_projectile_rect = self.decoration_projectile.get_rect(midleft = (self.decoration_sprite_rect.midright[0] + 10, self.decoration_sprite_rect.midright[1]))
+        self.decoration_projectile_rect = self.decoration_projectile.get_rect(midleft = (self.decoration_sprite_rect.midright[0] + 7, self.decoration_sprite_rect.midright[1]))
+
+        self.decoration_powerups = pygame.image.load("graphics/decoration_powerups.png").convert_alpha()
+        self.decoration_powerups_rect = self.decoration_powerups.get_rect(bottomleft = (30, SCREEN_HEIGHT - 30))
+
+        self.decoration_hearts = pygame.image.load("graphics/decoration_hearts.png").convert_alpha()
+        self.decoration_hearts_rect = self.decoration_hearts.get_rect(bottomright = (SCREEN_WIDTH - 30, SCREEN_HEIGHT - 30))
 
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
@@ -120,10 +126,10 @@ class Game:
                 exit_from_hyperspace(self)
         elif self.game_state == GameState.HELPMENU:
             self.decoration_sprite_rect.midright = self.decoration_sprite_rect.midright[0] + 5, self.decoration_sprite_rect.midright[1]
-            if self.decoration_sprite_rect.midright[0] > SCREEN_WIDTH - 25: self.decoration_sprite_rect.midleft = 25, self.decoration_sprite_rect.midright[1]
-
-            self.decoration_projectile_rect.midleft = self.decoration_sprite_rect.midright[0] + 10, self.decoration_sprite_rect.midright[1]
-            if self.decoration_projectile_rect.midleft[0] > SCREEN_WIDTH - 25: self.decoration_projectile_rect.midleft = 25, self.decoration_projectile_rect.midright[1]
+            if self.decoration_sprite_rect.midright[0] > SCREEN_WIDTH - 25:
+                self.decoration_sprite_rect.midleft = 25, self.decoration_sprite_rect.midright[1]
+                self.decoration_projectile_rect.midleft = self.decoration_sprite_rect.midright[0] + 7, self.decoration_sprite_rect.midright[1]
+            self.decoration_projectile_rect.midleft = self.decoration_projectile_rect.midleft[0] + 7, self.decoration_projectile_rect.midleft[1] 
 
 
 

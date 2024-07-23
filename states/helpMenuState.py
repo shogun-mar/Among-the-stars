@@ -28,7 +28,8 @@ def handle_help_menu_events(game, key):
     pass
 
 def handle_help_menu_events_mouse(game, button, mouse_pos):
-    pass
+    if button == 1 and play_text_rect.collidepoint(mouse_pos): # Check if the left mouse button is pressed and the mouse is over the play button
+        game.game_state = GameState.GAMEPLAY
 
 def render_help_menu(game):
     game.fake_screen.fill((0, 0, 0))
@@ -42,3 +43,5 @@ def render_help_menu(game):
     game.fake_screen.blit(play_text, play_text_rect)
     game.fake_screen.blit(game.decoration_sprite, game.decoration_sprite_rect)
     game.fake_screen.blit(game.decoration_projectile, game.decoration_projectile_rect)
+    game.fake_screen.blit(game.decoration_powerups, game.decoration_powerups_rect)
+    game.fake_screen.blit(game.decoration_hearts, game.decoration_hearts_rect)
