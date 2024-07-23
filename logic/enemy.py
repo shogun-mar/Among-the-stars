@@ -1,6 +1,6 @@
 import pygame
 import random, math
-from settings import SCREEN_HEIGHT , Z_DISTANCE, CENTER, ROTATION_VELOCITY, SCALE_POS, MAX_NUM_PROJECTILES_SCREEN
+from settings import SCREEN_HEIGHT , Z_DISTANCE, CENTER, ROTATION_VELOCITY, SCALE_POS, MAX_NUM_PROJECTILES_SCREEN, SCALE_MULTIPLIER_LINEAR_FACTOR
 from logic.projectile import Projectile
 
 vec2, vec3 = pygame.math.Vector2, pygame.math.Vector3
@@ -11,7 +11,7 @@ class Enemy:
         self.screen_rect = self.screen.get_rect()
         self.game = game
         self.pos3d = self.get_pos3d()
-        self.scale_multiplier = 1
+        self.scale_multiplier: float = 1
         self.vel = random.uniform(0.05, 0.25)
         self.sprite = pygame.image.load('graphics/spaceship_enemy.png')
         self.rect = self.sprite.get_rect(topleft = (0, 0))
@@ -34,16 +34,19 @@ class Enemy:
             self.pos3d.xy = self.pos3d.xy.rotate(ROTATION_VELOCITY) # Rotate
             self.mouse_offset = pygame.math.Vector2(pygame.mouse.get_pos()) - CENTER
 
-        # Calculate scale multiplier based on z-distance
-        self.scale_multiplier = round(1 / max(self.pos3d.z, 1), 2) # Avoid division by zero or negative values
-        print(self.scale_multiplier)
-        # Update the sprite size based on the scale multiplier
-        scaled_width = int(self.sprite_width * self.scale_multiplier)
-        scaled_height = int(self.sprite_height * self.scale_multiplier)
-        self.sprite = pygame.transform.scale(self.sprite, (scaled_width, scaled_height))
-        # Update the rect size and position
-        self.rect.size = self.sprite.get_size()
-        self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / max(self.pos3d.z, 1) + CENTER + self.mouse_offset
+        if self.is_on_screen():
+            self.scale_multiplier = round(1 + SCALE_MULTIPLIER_LINEAR_FACTOR * (Z_DISTANCE - self.pos3d.z), 2)
+            # self.scale_multiplier = round(base_scale_value + linear_increase_factor * (Z_DISTANCE - self.pos3d.z))
+
+            # Debugging print statement to observe the scale_multiplier calculation
+            print("Scale Multiplier = ", self.scale_multiplier, "Z Distance = ", self.pos3d.z)
+            # Update the sprite size based on the scale multiplier
+            scaled_width = int(self.sprite_width * self.scale_multiplier)
+            scaled_height = int(self.sprite_height * self.scale_multiplier)
+            self.sprite = pygame.transform.scale(self.sprite, (scaled_width, scaled_height))
+            # Update the rect size and position
+            self.rect.size = self.sprite.get_size()
+            self.rect.topleft = vec2(self.pos3d.x, self.pos3d.y) / max(self.pos3d.z, 1) + CENTER + self.mouse_offset
 
         if (random.random() < 0.01) and self.can_shoot(): self.shoot_at_player() # Random chance to shoot at the player
 
@@ -58,4 +61,6 @@ class Enemy:
         projectile = Projectile(self.rect.midbottom, self) # Create a projectile aimed at the player's position
         self.game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
-        
+    def is_on_screen(self):
+        return True
+        return self.rect.colliderect(self.screen_rect)
