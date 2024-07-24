@@ -2,10 +2,9 @@ import pygame
 from settings import PROJECTILE_VELOCITY, vec2
 
 class Projectile:
-    def __init__(self, original_entity, target_pos, is_enemy, game):
+    def __init__(self, original_entity, target_pos, game):
         self.game = game
         self.original_entity = original_entity
-        self.is_enemy = is_enemy
         self.target_pos = target_pos
         self.pos3d = self.original_entity.pos3d
         self.vel = PROJECTILE_VELOCITY  # Projectile velocity
@@ -15,25 +14,23 @@ class Projectile:
 
     def update(self):
         # Calculate direction vector (from projectile to target)
-        direction = self.target_pos - pygame.math.Vector2(self.rect.center)
+        direction = self.target_pos - pygame.math.Vector2(self.rect.midbottom)
         distance = direction.length()  # Calculate the distance to the target
 
         if distance <= self.vel: # If close enough, place the projectile directly at the target position
-            self.rect.center = self.target_pos
+            self.rect.midbottom = self.target_pos
         else: # Normalize the direction vector and move the projectile towards the target
             direction.normalize_ip() #Adjust the direction vector to have a length of 1 withouth changing the direction
-            self.rect.center += direction * self.vel
+            self.rect.midbottom += direction * self.vel
 
-        if self.rect.center == self.target_pos:
-            if not self.is_enemy: self.game.game_starfield.objects_to_remove.append(self.original_entity)
-
-            if not self.game.is_shield_active: 
-                if self.is_enemy: self.game.current_life_points -= 1
-                self.game.game_starfield.objects_to_remove.append(self)
-            else:
-                self.rect.midbottom, self.target_pos = self.target_pos, self.rect.midbottom #Swap the projectile position with the target position to make the projectile go back to the player
+        if self.rect.midbottom == self.target_pos:
+            self.game.game_starfield.objects_to_remove.append(self) 
+            if not self.game.is_shield_active: #If the shield is not active the player will lose a life point
+                if self.target_pos == self.game.player.rect.midtop: self.game.current_life_points -= 1
+            else: #If the shield is active the projectile will go back to the enemy
+                projectile = Projectile(original_entity=self.game.player, target_pos=self.original_entity.shooting_points_coords, game=self.game)
+                self.game.game_starfield.projectiles.append(projectile)
             
-
     def draw(self):
         self.game.fake_screen.blit(self.sprite, self.rect) #To avoid adding unnecessary lines of code i will use the original entity screen to draw the projectile
 

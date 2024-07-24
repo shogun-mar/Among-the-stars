@@ -19,6 +19,8 @@ ATTACK_COOLDOWN = 3500 #5000 #Expressed in milliseconds
 PLAYER_LIFE_POINTS = 5 #5
 MAX_PLAYER_LIFE_POINTS = 8
 ENEMY_ATTACK_COOLDOWN = 2000 #Expressed in milliseconds
+SHIELD_COOLDOWN = 5000 #Expressed in milliseconds
+SHIELD_DURATION = 3000 #Expressed in milliseconds
 
 #Keybinds
 FULLSCREEN_KEY = pygame.K_f

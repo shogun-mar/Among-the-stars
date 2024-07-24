@@ -34,6 +34,9 @@ def handle_help_menu_events_mouse(game, button, mouse_pos):
     if button == 1 and play_text_rect.collidepoint(mouse_pos): # Check if the left mouse button is pressed and the mouse is over the play button
         game.game_state = GameState.GAMEPLAY
         game.alpha_surface.set_alpha(GAMEPLAY_ALPHA_VALUE)
+        game.last_hyperspace_travel_time = game.current_time
+        game.last_attack_time = game.current_time
+        game.last_shield_activation_time = game.current_time
 
 def render_help_menu(game):
     game.fake_screen.fill((0, 0, 0))

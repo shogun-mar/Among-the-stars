@@ -1,6 +1,6 @@
 import pygame
 from logic.states.gameState import GameState
-from settings import *
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, GAMEPLAY_ALPHA_VALUE, PLAYER_LIFE_POINTS
 
 pygame.font.init()
 font = pygame.font.Font("graphics/Sterion-BLLld.ttf", 48)
@@ -20,8 +20,10 @@ def handle_gameover_events_mouse(game, button, mouse_pos):
     if play_text_rect.collidepoint(mouse_pos) and button == 1:
         game.game_state = GameState.GAMEPLAY
         game.alpha_surface.set_alpha(GAMEPLAY_ALPHA_VALUE)
-        game.last_hyperspace_travel_time = pygame.time.get_ticks()
-        game.last_attack_time = pygame.time.get_ticks()
+        game.last_hyperspace_travel_time = game.current_time
+        game.last_attack_time = game.current_time
+        game.last_shield_activation_time = game.current_time
+        game.current_life_points = PLAYER_LIFE_POINTS
 
 def render_gameover_menu(game):
     game.fake_screen.blit(game.alpha_surface, (0, 0))

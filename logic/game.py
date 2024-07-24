@@ -9,6 +9,7 @@ from logic.states.startMenuState import *
 from logic.states.hyperspaceState import *
 from logic.states.helpMenuState import *
 from logic.states.gameoverState import *
+from logic.states.pauseMenuState import *
 
 class Game:
     def __init__(self):
@@ -54,8 +55,12 @@ class Game:
         self.heart_rects = [self.heart_sprite.get_rect(topleft = ((SCREEN_WIDTH // 2) - i * 30 + 20, 70)) for i in range(MAX_PLAYER_LIFE_POINTS)]
 
         self.is_shield_active: bool = False
+        self.last_shield_activation_time: int = 0
         self.shield_sprite = pygame.image.load("graphics/shield_icon.png").convert_alpha()
         self.shield_rect = self.shield_sprite.get_rect(midbottom = (SCREEN_WIDTH // 2, SCREEN_HEIGHT))
+
+        self.attack_circle_progress = 0 # Progress of the attack cooldown circle
+        self.shield_circle_progress = 0 # Progress of the shield cooldown circle
 
         #Help menu stuff
         self.decoration_sprite = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("graphics/spaceship_enemy.png").convert_alpha(), 90), (250, 250))
@@ -119,6 +124,7 @@ class Game:
                     elif self.game_state == GameState.STARTMENU: handle_start_menu_events_mouse(self, event.button, pygame.mouse.get_pos())           
                     elif self.game_state == GameState.HELPMENU: handle_help_menu_events_mouse(self, event.button, pygame.mouse.get_pos())
                     elif self.game_state == GameState.GAMEOVER: handle_gameover_events_mouse(self, event.button, pygame.mouse.get_pos())
+                    elif self.game_state == GameState.PAUSE: handle_pause_menu_events_mouse(self, event.button, pygame.mouse.get_pos())
 
     def update_logic(self):
         pygame.display.set_caption(f"Among the stars - FPS: {int(self.clock.get_fps())}") #Update window caption with current FPS
@@ -127,8 +133,13 @@ class Game:
             if self.current_life_points == 0: 
                 self.alpha_surface.set_alpha(HYPERSPACE_ALPHA_VALUE)
                 self.game_state = GameState.GAMEOVER
+            if self.is_shield_active:
+                if pygame.time.get_ticks() - self.last_shield_activation_time > SHIELD_DURATION:
+                    self.is_shield_active = False
+                    self.last_shield_activation_time = pygame.time.get_ticks() #A bit counterintuitive but it is necessary to reset the cooldown otherwise the cooldown will progress while the shield is active
+                    self.shield_circle_progress = 0
                 
-        elif self.game_state == GameState.STARTMENU or self.game_state == GameState.GAMEOVER:
+        elif self.game_state == GameState.STARTMENU or self.game_state == GameState.GAMEOVER or self.game_state == GameState.PAUSE:
             self.hyperspace_starfield.update(self)
 
         elif self.game_state == GameState.HYPERSPACE:
@@ -150,8 +161,7 @@ class Game:
         elif self.game_state == GameState.HYPERSPACE: render_hyperspace(self)
         elif self.game_state == GameState.HELPMENU: render_help_menu(self)
         elif self.game_state == GameState.GAMEOVER: render_gameover_menu(self)
-        elif self.game_state == GameState.PAUSE:
-            pass
+        elif self.game_state == GameState.PAUSE: render_pause_menu(self)
 
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0)) #Scale the fake screen to the current screen size
         pygame.display.flip()
@@ -174,6 +184,10 @@ class Game:
 
     def set_player(self, player):
         self.player = player
+
+    @property
+    def current_time(self):
+        return pygame.time.get_ticks()
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

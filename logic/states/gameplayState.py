@@ -6,16 +6,16 @@ from logic.powerup import PowerUp
 from logic.enemy import Enemy
 from logic.projectile import Projectile
 
-attack_circle_progress = 0 # Progress of the attack cooldown circle
-shield_circle_progress = 0 # Progress of the shield cooldown circle
+# Constants
+FULL_CIRCLE = 2 * pi  # Full circle in radians
 
 def handle_gameplay_events(game, key):
     if key == PAUSE_KEY:
         game.game_state = GameState.PAUSE
-    elif key == SHIELD_KEY and shield_circle_progress == 1:
-        if game.is_shield_active == False: game.shield_active = True
-        #global shield_circle_progress
-        #shield_circle_progress = 0
+        game.alpha_surface.set_alpha(HYPERSPACE_ALPHA_VALUE)
+    elif key == SHIELD_KEY and game.shield_circle_progress == 1:
+        game.is_shield_active = True
+        game.last_shield_activation_time = pygame.time.get_ticks()
     elif key == HYPERSPACE_KEY:
         current_time = pygame.time.get_ticks()
         temp_hyperspace_travel_time = current_time - game.last_hyperspace_travel_time
@@ -38,17 +38,16 @@ def render_gameplay(game):
     game.fake_screen.blit(game.rendered_score, game.rendered_score_rect)
     for i in range(game.current_life_points): game.fake_screen.blit(game.heart_sprite, game.heart_rects[i])
     render_hyperspace_cooldown_bar(game) # Draw hyperspace cooldown bar
-    if attack_circle_progress != 1: render_attack_cooldown_circle(game) # Draw attack cooldown circle if not fully charged
-    if shield_circle_progress != 1: render_shield_cooldown_circle(game) # Draw shield cooldown circle if not fully charged
+    if game.attack_circle_progress != 1: render_attack_cooldown_circle(game) # Draw attack cooldown circle if not fully charged
+    if game.shield_circle_progress != 1: render_shield_cooldown_circle(game) # Draw shield cooldown circle if not fully charged
     
 def check_collisions(game, mouse_pos):
-    global attack_circle_progress
 
     if pygame.mouse.get_pressed()[0]:  # Check if left mouse button is pressed
         current_time = pygame.time.get_ticks()
         if current_time - game.last_attack_time > game.attack_cooldown:  # Check if the attack cooldown has passed
             game.last_attack_time = current_time  # Update last attack time immediately after cooldown check
-            attack_circle_progress = 0  # Reset the attack cooldown circle progress
+            game.attack_circle_progress = 0  # Reset the attack cooldown circle progress
 
             if not is_mouse_over_star(game, mouse_pos):  # Check if the mouse is not over a star
                 elements_to_check = game.game_starfield.enemies + game.game_starfield.powerups # Combine enemies and powerups into a single list
@@ -76,7 +75,7 @@ def activate_powerup(game, powerup):
         game.update_score(2)
 
 def shoot_at_target(game, target_pos):
-    projectile = Projectile(original_entity=game.player, target_pos=target_pos, is_enemy=False, game=game) # Create a projectile aimed at the player's position
+    projectile = Projectile(original_entity=game.player, target_pos=target_pos, game=game) # Create a projectile aimed at the player's position
     game.game_starfield.projectiles.append(projectile) # Add the projectile to the projectiles list in game_starfield
 
 def render_hyperspace_cooldown_bar(game):
@@ -85,16 +84,12 @@ def render_hyperspace_cooldown_bar(game):
     pygame.draw.rect(game.fake_screen, 'crimson', (0, 0, cooldown_width, 10))
 
 def render_shield_cooldown_circle(game):
-    global shield_circle_progress
-
-    # Constants
-    FULL_CIRCLE = 2 * pi  # Full circle in radians
 
     # Calculate progress based on time since last attack
     current_time = pygame.time.get_ticks()
-    time_since_last_attack = current_time - game.last_attack_time
-    shield_circle_progress = time_since_last_attack / ATTACK_COOLDOWN
-    shield_circle_progress = min(max(shield_circle_progress, 0), 1)  # Clamp between 0 and 1
+    time_since_last_shield = current_time - game.last_shield_activation_time
+    game.shield_circle_progress = time_since_last_shield / SHIELD_COOLDOWN
+    game.shield_circle_progress = min(max(game.shield_circle_progress, 0), 1)  # Clamp between 0 and 1
 
     # Background circle
     thickness = 2
@@ -103,21 +98,17 @@ def render_shield_cooldown_circle(game):
     pygame.draw.circle(game.fake_screen, (100, 100, 100), position, radius, thickness)  # Dark gray background
 
     # Cooldown circle
-    end_angle = FULL_CIRCLE * shield_circle_progress
+    end_angle = FULL_CIRCLE * game.shield_circle_progress
     rect = pygame.Rect(position[0] - radius, position[1] - radius, radius * 2, radius * 2)
     pygame.draw.arc(game.fake_screen, (0, 0, 255), rect, -pi / 2, end_angle - pi / 2, radius) # Cooldown arc
 
 def render_attack_cooldown_circle(game):
-    global attack_circle_progress
-
-    # Constants
-    FULL_CIRCLE = 2 * pi  # Full circle in radians
 
     # Calculate progress based on time since last attack
     current_time = pygame.time.get_ticks()
     time_since_last_attack = current_time - game.last_attack_time
-    attack_circle_progress = time_since_last_attack / ATTACK_COOLDOWN
-    attack_circle_progress = min(max(attack_circle_progress, 0), 1)  # Clamp between 0 and 1
+    game.attack_circle_progress = time_since_last_attack / ATTACK_COOLDOWN
+    game.attack_circle_progress = min(max(game.attack_circle_progress, 0), 1)  # Clamp between 0 and 1
 
     # Background circle
     thickness = 2
@@ -126,6 +117,6 @@ def render_attack_cooldown_circle(game):
     pygame.draw.circle(game.fake_screen, (100, 100, 100), position, radius, thickness)  # Dark gray background
 
     # Cooldown circle
-    end_angle = FULL_CIRCLE * attack_circle_progress
+    end_angle = FULL_CIRCLE * game.attack_circle_progress
     rect = pygame.Rect(position[0] - radius, position[1] - radius, radius * 2, radius * 2)
     pygame.draw.arc(game.fake_screen, (255, 0, 0), rect, -pi / 2, end_angle - pi / 2, radius) # Cooldown arc
