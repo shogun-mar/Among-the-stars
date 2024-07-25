@@ -37,7 +37,9 @@ Z_DISTANCE = 40 #40
 GAMEPLAY_ALPHA_VALUE = 64
 
 #For demo game_starfield
-DEMO_COLORS = 'mediumpurple3 indigo crimson seagreen1 salmon1 purple2 plum3 palevioletred violetred springgreen4 steelblue4 steelblue slateblue4 slateblue sienna2 blue cyan skyblue purple magenta red green blue yellow cyan magenta white'.split()
+DEMO_COLORS = 'greenyellow goldenrod2 fuchsia deeppink4 cornflowerblue darkred darkslategrey blueviolet mediumpurple3 indigo crimson seagreen1 salmon1 purple2 plum3 palevioletred violetred springgreen4 \
+                          steelblue4 steelblue slateblue4 slateblue sienna2 cyan skyblue purple magenta red green blue yellow \
+                          white'.split()
 HYPERSPACE_ALPHA_VALUE = 30 
 DEMO_Z_DISTANCE = 140
 DEMO_STARS_NUM = randint(250, 1000)
